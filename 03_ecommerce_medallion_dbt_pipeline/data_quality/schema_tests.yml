@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: mart_ecommerce_funnel
+    description: "Daily eCommerce Funnel Performance Mart"
+    tests:
+      - unique:
+          column_name: "event_date || '-' || channel || '-' || device_type"
+      - not_null:
+          columns: [event_date, channel, device_type, total_sessions]
+    columns:
+      - name: overall_session_cvr
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0.0
+              max_value: 100.0

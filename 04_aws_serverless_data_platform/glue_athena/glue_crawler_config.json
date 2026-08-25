@@ -1,0 +1,19 @@
+{
+    "Name": "analytics_lake_crawler",
+    "Role": "arn:aws:iam::123456789012:role/AWSGlueServiceRole-Analytics",
+    "DatabaseName": "analytics_catalog",
+    "Targets": {
+        "S3Targets": [
+            {
+                "Path": "s3://processed-analytics-lake/"
+            }
+        ]
+    },
+    "SchemaChangePolicy": {
+        "UpdateBehavior": "UPDATE_IN_DATABASE",
+        "DeleteBehavior": "LOG"
+    },
+    "RecrawlPolicy": {
+        "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY"
+    }
+}

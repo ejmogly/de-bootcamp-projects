@@ -1,0 +1,50 @@
+# ==========================================
+# Excluded Raw Archives & Transcripts
+# ==========================================
+\[0주\]*
+\[1주\]*
+\[2주\]*
+\[3주\]*
+\[4주\]*
+\[5주\]*
+\[6주~8주\]*
+\[9주~10주\]*
+\[7월*
+*강의자료*
+*강의_자료*
+*수강 후기*
+*실무 프로젝트 공개*
+*실전 구축부터*
+*전 과정 파이프라인*
+
+*.pdf
+*.pptx
+*.pptx.pptx
+*.zip
+*.tar.gz
+*.parquet
+*.dump
+*.sql.dump
+
+# ==========================================
+# System & Environments
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+__pycache__/
+*.py[cod]
+env/
+venv/
+.venv/
+airflow.db
+airflow.cfg
+logs/
+spark-events/
+metastore_db/
+derby.log
+checkpoint/
+checkpoints/
+.dbt/
+target/
+dbt_packages/
