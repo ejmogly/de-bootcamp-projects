@@ -15,7 +15,7 @@
 [![AWS](https://img.shields.io/badge/Cloud-AWS%20Data%20Platform-232F3E?style=flat-square&logo=amazonwebservices&logoColor=white)](https://aws.amazon.com/)
 
 <p align="center">
-  <b>"안정적이고 확장 가능한 데이터 파이프라인으로 비즈니스 의사결정을 가속화하는 데이터 엔지니어 이제이입니다."</b><br/>
+  <b>"안정적이고 확장 가능한 데이터 파이프라인으로 비즈니스 의사결정을 가속화하는 데이터 애널리틱스 엔지니어 이제이입니다."</b><br/>
   메타코드M 데이터 엔지니어 부트캠프에서 구축한 <b>4대 실무 데이터 파이프라인 프로젝트</b>와 <b>6개 핵심 엔지니어링 모듈</b>을 집약한 포트폴리오입니다.
 </p>
 
