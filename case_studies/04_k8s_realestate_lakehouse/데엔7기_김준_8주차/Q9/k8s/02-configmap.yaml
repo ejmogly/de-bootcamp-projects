@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: realestate-html-config
+  namespace: realestate-junekim
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <title>부동산 실거래가 분석 - Q8 Gold 요약</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; color: #1e293b; padding: 40px 20px; text-align: center; }
+        .container { max-width: 680px; margin: 0 auto; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 36px 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.6rem; color: #0f172a; margin-bottom: 8px; font-weight: 700; }
+        .subtitle { font-size: 0.9rem; color: #64748b; margin-bottom: 24px; }
+        .section-title { font-size: 1.15rem; font-weight: 600; color: #1e293b; margin-bottom: 16px; text-align: left; border-left: 4px solid #3b82f6; padding-left: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 12px; text-align: center; }
+        th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 12px 8px; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; font-size: 0.95rem; }
+        td { padding: 14px 8px; border-bottom: 1px solid #e2e8f0; font-size: 0.95rem; }
+        tr:hover { background: #f8fafc; }
+        .rank { font-weight: 700; color: #3b82f6; }
+        .district { font-weight: 600; }
+        .price { font-weight: 700; color: #0f172a; }
+        .note { font-size: 0.85rem; color: #64748b; text-align: right; margin-bottom: 20px; }
+        .footer { font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 8px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>부동산 실거래가 분석 — Q8 Gold 요약</h1>
+        <div class="subtitle">제출자: 데엔 7기 김준 • 8주차 과제 • K8s 정적 페이지 배포 (Q9)</div>
+        
+        <div class="section-title">시군구별 평당가 TOP 3 (2026년 수집 데이터)</div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 20%;">순위</th>
+              <th style="width: 40%;">시군구</th>
+              <th style="width: 40%;">평당가 (만원)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="rank">1</td>
+              <td class="district">강남구</td>
+              <td class="price">10,829</td>
+            </tr>
+            <tr>
+              <td class="rank">2</td>
+              <td class="district">서초구</td>
+              <td class="price">8,848</td>
+            </tr>
+            <tr>
+              <td class="rank">3</td>
+              <td class="district">용산구</td>
+              <td class="price">8,355</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note">* 과제 03 PostgreSQL Gold 마트(gold_realestate_district_avg) 거래량 가중평균 실측치 반영</div>
+
+        <div class="footer">데이터 출처: 국토교통부 실거래가 공개 API • Bronze → Silver → Gold ETL</div>
+      </div>
+    </body>
+    </html>

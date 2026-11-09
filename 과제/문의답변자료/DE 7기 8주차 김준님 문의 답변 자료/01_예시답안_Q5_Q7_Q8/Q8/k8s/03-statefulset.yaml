@@ -1,0 +1,47 @@
+# 과제 08 (2) — StatefulSet
+#
+#  Deployment 와 달리 파드가 stock-0 ~ stock-4 로 순차 생성되고,
+#  volumeClaimTemplates 로 파드마다 PVC 가 따로 만들어진다.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stock
+  namespace: stock-honggildong
+spec:
+  serviceName: stock-svc        # ← 02-headless-service.yaml 의 name 과 일치해야 DNS 가 생긴다
+  replicas: 5                   # 종목 5개 (AAPL · JNJ · JPM · TSLA · XOM)
+  selector:
+    matchLabels:
+      app: stock
+  template:
+    metadata:
+      labels:
+        app: stock
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - name: web         # ← Service 의 포트 이름과 일치
+              containerPort: 80
+          # 헤드리스 서비스의 파드 DNS 는 Ready 파드에만 생긴다.
+          # 적재 전에는 볼륨이 비어 있어 HTTP(/) 검사가 403 이므로 포트 열림으로 판단한다.
+          readinessProbe:
+            tcpSocket:
+              port: web
+            periodSeconds: 5
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 100m, memory: 64Mi}
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html   # nginx 가 정적 파일을 서비스하는 경로
+  volumeClaimTemplates:
+    - metadata:
+        name: html
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path            # k3d · k3s 내장 동적 프로비저너
+        resources:
+          requests:
+            storage: 100Mi

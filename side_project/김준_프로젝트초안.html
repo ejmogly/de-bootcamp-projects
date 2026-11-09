@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>김준_프로젝트초안 - 스마트 퀵커머스 실시간 레이크하우스</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 12mm 12mm 12mm;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1e293b;
+    line-height: 1.5;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+  }
+
+  .header {
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .header-left h1 {
+    font-size: 19px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 3px 0;
+    letter-spacing: -0.02em;
+  }
+  .header-left p {
+    font-size: 11.5px;
+    color: #64748b;
+    margin: 0;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 11px;
+    color: #475569;
+    line-height: 1.4;
+  }
+  .header-right strong {
+    font-size: 12.5px;
+    color: #0f172a;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-primary { background: #e0e7ff; color: #3730a3; }
+
+  h2 {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 12px 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-left: 3px solid #2563eb;
+    padding-left: 7px;
+    page-break-after: avoid;
+  }
+
+  p, ul {
+    margin: 0 0 6px 0;
+  }
+  ul {
+    padding-left: 16px;
+  }
+  li {
+    margin-bottom: 2px;
+  }
+
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6px 0 10px 0;
+    font-size: 11px;
+    page-break-inside: avoid;
+  }
+  th, td {
+    padding: 5px 7px;
+    border: 1px solid #cbd5e1;
+    text-align: left;
+  }
+  th {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-weight: 700;
+  }
+  tr:nth-child(even) td {
+    background: #fafbfc;
+  }
+
+  code, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-size: 10px;
+    line-height: 1.4;
+    overflow-x: auto;
+    margin: 4px 0 8px 0;
+    page-break-inside: avoid;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  .svg-container {
+    text-align: center;
+    margin: 6px 0;
+    page-break-inside: avoid;
+  }
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .highlight-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-left: 3px solid #3b82f6;
+    padding: 7px 9px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    page-break-inside: avoid;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1 ==================== -->
+<div class="header">
+  <div class="header-left">
+    <span class="badge badge-primary">CDC LAKEHOUSE STUDY · 3회차 과제</span>
+    <h1>프로젝트 설계 초안: 스마트 퀵커머스 실시간 레이크하우스</h1>
+    <p>실시간 주문 접수·라이더 배차·정산 트래픽 모니터링 및 결제 정정 감사 추적 파이프라인</p>
+  </div>
+  <div class="header-right">
+    <div>작성자: <strong>김준 (junekim)</strong></div>
+    <div>제출일: 2026년 10월 26일</div>
+    <div>소속: 데엔 부트캠프 7기</div>
+  </div>
+</div>
+
+<h2>1. 도메인과 비즈니스 목적</h2>
+<div class="card">
+  <div class="grid-2">
+    <div>
+      <strong style="color:#0f172a;">📌 다루고자 하는 서비스 도메인</strong>
+      <p style="margin-top:3px; font-size:11.5px;">
+        도심형 즉시 배송(15~30분 마이크로 풀필먼트)을 지원하는 <strong>스마트 퀵커머스 플랫폼</strong>입니다.
+        고객의 주문 생성, 결제 승인/부분 환불/철회, 라이더 배차 및 최종 배송 완료까지의 라이프사이클을 실시간으로 추적합니다.
+      </p>
+    </div>
+    <div>
+      <strong style="color:#0f172a;">🎯 이 데이터로 확인하고 싶은 핵심 가치</strong>
+      <ul style="margin-top:3px; font-size:11.5px;">
+        <li><strong>주문 취소 및 결제 철회 감사 추적</strong>: 원천 DB에서 취소된 결제가 물리 삭제(DELETE)되더라도 Bronze 불변 로그를 통해 누수 없는 정산 대사 보장</li>
+        <li><strong>실시간 배송 SLA 준수율 모니터링</strong>: 배차 후 배송 완료까지의 리드타임 지연 및 취소율을 실시간 감지하여 라이더 보상 기준 산출</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<h2>2. 테이블 구조와 관계 (ERD)</h2>
+<p style="font-size:11.5px;">원천 PostgreSQL에 배치할 핵심 3개 엔티티입니다. <code>orders</code>를 중심 Hub로 하여 결제 트랜잭션과 물류 배송 정보가 1:N / 1:1로 유기적으로 연계됩니다.</p>
+
+<div class="svg-container">
+  <svg width="680" height="140" viewBox="0 0 680 140" xmlns="http://www.w3.org/2000/svg">
+    <!-- Payments Box (Left) -->
+    <rect x="15" y="10" width="200" height="120" rx="6" fill="#f8fafc" stroke="#10b981" stroke-width="2"/>
+    <rect x="15" y="10" width="200" height="24" rx="6" fill="#10b981"/>
+    <text x="115" y="26" fill="#ffffff" font-family="Pretendard" font-weight="700" font-size="11" text-anchor="middle">ecommerce.payments (결제/정산)</text>
+    <text x="25" y="50" font-family="JetBrains Mono" font-size="9.5" fill="#0f172a">PK: payment_id (VARCHAR)</text>
+    <text x="25" y="66" font-family="JetBrains Mono" font-size="9.5" fill="#2563eb">FK: order_id (VARCHAR)</text>
+    <text x="25" y="82" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">payment_method (VARCHAR)</text>
+    <text x="25" y="98" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">pay_amount (NUMERIC)</text>
+    <text x="25" y="114" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">payment_status / paid_at</text>
+
+    <!-- Connector Left: Orders -> Payments -->
+    <line x1="240" y1="70" x2="215" y2="70" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <polyline points="220,66 215,70 220,74" fill="none" stroke="#64748b" stroke-width="1.5"/>
+    <text x="228" y="63" font-family="JetBrains Mono" font-size="8" fill="#64748b" text-anchor="middle">1:N</text>
+
+    <!-- Orders Box (Center Hub) -->
+    <rect x="240" y="10" width="200" height="120" rx="6" fill="#f8fafc" stroke="#3b82f6" stroke-width="2"/>
+    <rect x="240" y="10" width="200" height="24" rx="6" fill="#3b82f6"/>
+    <text x="340" y="26" fill="#ffffff" font-family="Pretendard" font-weight="700" font-size="11" text-anchor="middle">ecommerce.orders (주문 마스터)</text>
+    <text x="250" y="50" font-family="JetBrains Mono" font-size="9.5" fill="#0f172a">PK: order_id (VARCHAR)</text>
+    <text x="250" y="66" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">customer_id (VARCHAR)</text>
+    <text x="250" y="82" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">order_status (VARCHAR)</text>
+    <text x="250" y="98" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">total_amount (NUMERIC)</text>
+    <text x="250" y="114" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">ordered_at / updated_at</text>
+
+    <!-- Connector Right: Orders -> Deliveries -->
+    <line x1="440" y1="70" x2="465" y2="70" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <polyline points="460,66 465,70 460,74" fill="none" stroke="#64748b" stroke-width="1.5"/>
+    <text x="452" y="63" font-family="JetBrains Mono" font-size="8" fill="#64748b" text-anchor="middle">1:1</text>
+
+    <!-- Deliveries Box (Right) -->
+    <rect x="465" y="10" width="200" height="120" rx="6" fill="#f8fafc" stroke="#8b5cf6" stroke-width="2"/>
+    <rect x="465" y="10" width="200" height="24" rx="6" fill="#8b5cf6"/>
+    <text x="565" y="26" fill="#ffffff" font-family="Pretendard" font-weight="700" font-size="11" text-anchor="middle">ecommerce.deliveries (물류/배송)</text>
+    <text x="475" y="50" font-family="JetBrains Mono" font-size="9.5" fill="#0f172a">PK: delivery_id (VARCHAR)</text>
+    <text x="475" y="66" font-family="JetBrains Mono" font-size="9.5" fill="#2563eb">FK: order_id (VARCHAR)</text>
+    <text x="475" y="82" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">rider_id (VARCHAR)</text>
+    <text x="475" y="98" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">delivery_status (VARCHAR)</text>
+    <text x="475" y="114" font-family="JetBrains Mono" font-size="9.5" fill="#64748b">dispatched / delivered_at</text>
+  </svg>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:18%;">테이블명</th>
+      <th style="width:28%;">한 행의 비즈니스 의미</th>
+      <th style="width:20%;">PK / FK</th>
+      <th style="width:34%;">주요 컬럼 및 CDC 변경 유형</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>ecommerce.orders</strong></td>
+      <td>고객 1건의 주문 마스터 헤더</td>
+      <td>PK: <code>order_id</code></td>
+      <td>customer_id, order_status, total_amount, ordered_at<br><span style="color:#2563eb;">[CDC] INSERT, UPDATE (상태 전이)</span></td>
+    </tr>
+    <tr>
+      <td><strong>ecommerce.payments</strong></td>
+      <td>주문에 대한 결제 승인/부분환불/철회</td>
+      <td>PK: <code>payment_id</code><br>FK: <code>order_id</code></td>
+      <td>payment_method, pay_amount, payment_status, paid_at<br><span style="color:#059669;">[CDC] INSERT, UPDATE(금액정정), DELETE(철회)</span></td>
+    </tr>
+    <tr>
+      <td><strong>ecommerce.deliveries</strong></td>
+      <td>라이더 배차 및 실시간 배송 이동 상태</td>
+      <td>PK: <code>delivery_id</code><br>FK: <code>order_id</code></td>
+      <td>rider_id, delivery_status, tracking_number, delivered_at<br><span style="color:#7c3aed;">[CDC] INSERT, UPDATE (배송완료 등)</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page-break"></div>
+
+<h2>3. PostgreSQL 원천 테이블 생성 (DDL 및 실행 검증)</h2>
+<p style="font-size:11.5px;">개인 PostgreSQL(<code>source-db</code>) 컨테이너의 <code>app</code> 데이터베이스에 <code>ecommerce</code> 스키마를 구성하고 3개 테이블을 실제 생성 및 검증했습니다.</p>
+
+<pre><code>-- 1. 전용 스키마 생성 및 초기화
+CREATE SCHEMA IF NOT EXISTS ecommerce;
+
+-- 2. 주문 테이블
+CREATE TABLE ecommerce.orders (
+    order_id VARCHAR(36) PRIMARY KEY,
+    customer_id VARCHAR(36) NOT NULL,
+    order_status VARCHAR(20) NOT NULL DEFAULT 'CREATED',
+    total_amount NUMERIC(12, 2) NOT NULL CHECK (total_amount >= 0),
+    delivery_address TEXT NOT NULL,
+    ordered_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. 결제 트랜잭션 테이블 (주문과 1:N 관계)
+CREATE TABLE ecommerce.payments (
+    payment_id VARCHAR(36) PRIMARY KEY,
+    order_id VARCHAR(36) NOT NULL REFERENCES ecommerce.orders(order_id) ON DELETE CASCADE,
+    payment_method VARCHAR(20) NOT NULL,
+    pay_amount NUMERIC(12, 2) NOT NULL CHECK (pay_amount >= 0),
+    payment_status VARCHAR(20) NOT NULL DEFAULT 'AUTHORIZED',
+    paid_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. 배송 추적 테이블 (주문과 1:1 관계)
+CREATE TABLE ecommerce.deliveries (
+    delivery_id VARCHAR(36) PRIMARY KEY,
+    order_id VARCHAR(36) NOT NULL REFERENCES ecommerce.orders(order_id) ON DELETE CASCADE,
+    rider_id VARCHAR(36),
+    delivery_status VARCHAR(20) NOT NULL DEFAULT 'ASSIGNED',
+    tracking_number VARCHAR(50),
+    dispatched_at TIMESTAMPTZ,
+    delivered_at TIMESTAMPTZ
+);
+
+-- ★ 5. Debezium UPDATE/DELETE 시 before 이미지 온전 캡처를 위한 필수 설정
+ALTER TABLE ecommerce.orders REPLICA IDENTITY FULL;
+ALTER TABLE ecommerce.payments REPLICA IDENTITY FULL;
+ALTER TABLE ecommerce.deliveries REPLICA IDENTITY FULL;</code></pre>
+
+<div class="highlight-box">
+  <strong style="color:#1e40af;">🔍 실제 PostgreSQL 로컬 컨테이너 환경 검증 결과 (터미널 실측 캡처)</strong>
+  <pre style="margin:4px 0 0 0; background:#0f172a; color:#a7f3d0; font-size:9.5px;">
+app=# \dt ecommerce.*
+            List of relations
+  Schema   |    Name    | Type  | Owner  
+-----------+------------+-------+--------
+ ecommerce | deliveries | table | source
+ ecommerce | orders     | table | source
+ ecommerce | payments   | table | source
+(3 rows)
+
+app=# SELECT tablename, replica_identity FROM pg_publication_tables WHERE schemaname='ecommerce';
+ table_name |  replica_identity  
+------------+--------------------
+ deliveries | full (ALL COLUMNS)
+ orders     | full (ALL COLUMNS)
+ payments   | full (ALL COLUMNS)
+(3 rows - REPLICA IDENTITY FULL 'f' 설정 확인 완료)
+
+app=# INSERT/UPDATE/DELETE CRUD 라이프사이클 테스트 -> 전체 성공 (INSERT 0 1, UPDATE 1, DELETE 1)</pre>
+</div>
+
+<!-- ==================== PAGE 3 ==================== -->
+<div class="page-break"></div>
+
+<h2>4. 변경 시나리오 (수정·삭제 케이스)</h2>
+<div class="grid-2">
+  <div class="card" style="border-left:3px solid #2563eb;">
+    <strong style="color:#2563eb; font-size:11.5px;">시나리오 1: 품절로 인한 결제 금액 정정 및 결제 철회 (UPDATE & DELETE)</strong>
+    <p style="margin-top:3px; font-size:11px;">
+      • <strong>발생 상황</strong>: 45,000원 결제 후 일부 품목 품절로 38,000원으로 <code>UPDATE</code> ➔ 이후 고객의 즉시 주문 취소로 결제 레코드가 <code>Hard DELETE</code>됨.<br>
+      • <strong>수집 후 확인 목적</strong>: 원천 DB에는 0행으로 사라지지만, Bronze에 <code>c(45,000) -> u(38,000) -> d(before=38,000)</code>의 변경 이력이 보존되어 PG사 정산 수수료 대사 및 환불 정당성을 역추적.
+    </p>
+  </div>
+  <div class="card" style="border-left:3px solid #7c3aed;">
+    <strong style="color:#7c3aed; font-size:11.5px;">시나리오 2: 라이더 배차 및 배송 상태 전이 (UPDATE status)</strong>
+    <p style="margin-top:3px; font-size:11px;">
+      • <strong>발생 상황</strong>: 배송 상태가 <code>ASSIGNED</code>(배차) ➔ <code>PICKED_UP</code>(픽업) ➔ <code>IN_TRANSIT</code>(배송중) ➔ <code>DELIVERED</code>(완료)로 전이.<br>
+      • <strong>수집 후 확인 목적</strong>: 각 상태 전이 시점(Kafka timestamp vs Flink ingested_at)을 실측하여 30분 초과 배송 건에 대한 실시간 알림 및 라이더 인센티브 페널티 자동 산출.
+    </p>
+  </div>
+</div>
+
+<h2>5. 대략적인 파이프라인 설계 (End-to-End Architecture)</h2>
+<p style="font-size:11.5px;">원천 PostgreSQL WAL 스트림부터 Apache Iceberg Medallion 계층(Bronze·Silver·Gold)으로 이어지는 실시간 파이프라인 아키텍처입니다.</p>
+
+<div class="svg-container">
+  <svg width="680" height="130" viewBox="0 0 680 130" xmlns="http://www.w3.org/2000/svg">
+    <!-- Source DB -->
+    <rect x="10" y="15" width="105" height="105" rx="5" fill="#f8fafc" stroke="#475569" stroke-width="1.5"/>
+    <text x="62" y="38" font-family="Pretendard" font-weight="700" font-size="11" fill="#0f172a" text-anchor="middle">PostgreSQL</text>
+    <text x="62" y="55" font-family="Pretendard" font-size="9.5" fill="#64748b" text-anchor="middle">source-db:5432</text>
+    <text x="62" y="75" font-family="JetBrains Mono" font-size="9" fill="#2563eb" text-anchor="middle">wal_level=logical</text>
+    <text x="62" y="92" font-family="JetBrains Mono" font-size="9" fill="#059669" text-anchor="middle">REPLICA ID FULL</text>
+
+    <!-- Arrow 1 -->
+    <line x1="115" y1="67" x2="145" y2="67" stroke="#64748b" stroke-width="1.5"/>
+    <polygon points="145,63 152,67 145,71" fill="#64748b"/>
+    <text x="133" y="60" font-family="Pretendard" font-size="8" fill="#64748b" text-anchor="middle">WAL</text>
+
+    <!-- Debezium -->
+    <rect x="155" y="15" width="95" height="105" rx="5" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="202" y="38" font-family="Pretendard" font-weight="700" font-size="11" fill="#0284c7" text-anchor="middle">Debezium</text>
+    <text x="202" y="55" font-family="Pretendard" font-size="9.5" fill="#64748b" text-anchor="middle">Kafka Connect</text>
+    <text x="202" y="75" font-family="Pretendard" font-size="8.5" fill="#475569" text-anchor="middle">Envelope 직렬화</text>
+    <text x="202" y="92" font-family="Pretendard" font-size="8.5" fill="#dc2626" text-anchor="middle">Tombstone 발행</text>
+
+    <!-- Arrow 2 -->
+    <line x1="250" y1="67" x2="275" y2="67" stroke="#64748b" stroke-width="1.5"/>
+    <polygon points="275,63 282,67 275,71" fill="#64748b"/>
+
+    <!-- Kafka -->
+    <rect x="285" y="15" width="95" height="105" rx="5" fill="#f8fafc" stroke="#d97706" stroke-width="1.5"/>
+    <text x="332" y="38" font-family="Pretendard" font-weight="700" font-size="11" fill="#d97706" text-anchor="middle">Apache Kafka</text>
+    <text x="332" y="55" font-family="Pretendard" font-size="9" fill="#64748b" text-anchor="middle">버퍼링 토픽 3개</text>
+    <text x="332" y="73" font-family="JetBrains Mono" font-size="8" fill="#475569" text-anchor="middle">cdc.ecom.orders</text>
+    <text x="332" y="87" font-family="JetBrains Mono" font-size="8" fill="#475569" text-anchor="middle">cdc.ecom.payments</text>
+    <text x="332" y="101" font-family="JetBrains Mono" font-size="8" fill="#475569" text-anchor="middle">cdc.ecom.deliveries</text>
+
+    <!-- Arrow 3 -->
+    <line x1="380" y1="67" x2="405" y2="67" stroke="#64748b" stroke-width="1.5"/>
+    <polygon points="405,63 412,67 405,71" fill="#64748b"/>
+
+    <!-- Flink -->
+    <rect x="415" y="15" width="90" height="105" rx="5" fill="#f8fafc" stroke="#ea580c" stroke-width="1.5"/>
+    <text x="460" y="38" font-family="Pretendard" font-weight="700" font-size="11" fill="#ea580c" text-anchor="middle">Apache Flink</text>
+    <text x="460" y="55" font-family="Pretendard" font-size="9" fill="#64748b" text-anchor="middle">스트리밍 적재</text>
+    <text x="460" y="75" font-family="Pretendard" font-size="8.5" fill="#475569" text-anchor="middle">format='raw'</text>
+    <text x="460" y="92" font-family="Pretendard" font-size="8.5" fill="#dc2626" text-anchor="middle">Tombstone 필터링</text>
+
+    <!-- Arrow 4 -->
+    <line x1="505" y1="67" x2="525" y2="67" stroke="#64748b" stroke-width="1.5"/>
+    <polygon points="525,63 532,67 525,71" fill="#64748b"/>
+
+    <!-- Medallion Lakehouse -->
+    <rect x="535" y="10" width="135" height="115" rx="6" fill="#f8fafc" stroke="#4338ca" stroke-width="1.5"/>
+    <rect x="535" y="10" width="135" height="22" rx="6" fill="#4338ca"/>
+    <text x="602" y="25" fill="#ffffff" font-family="Pretendard" font-weight="700" font-size="10" text-anchor="middle">Apache Iceberg</text>
+    <text x="545" y="48" font-family="Pretendard" font-weight="700" font-size="9.5" fill="#b45309">Bronze (Raw Parquet)</text>
+    <text x="545" y="61" font-family="Pretendard" font-size="8" fill="#64748b">불변 감사 로그 S3 보존</text>
+    <text x="545" y="78" font-family="Pretendard" font-weight="700" font-size="9.5" fill="#475569">Silver (Spark MERGE)</text>
+    <text x="545" y="91" font-family="Pretendard" font-size="8" fill="#64748b">최신 상태 Upsert & SCD2</text>
+    <text x="545" y="106" font-family="Pretendard" font-weight="700" font-size="9.5" fill="#15803d">Gold (dbt Mart)</text>
+    <text x="545" y="117" font-family="Pretendard" font-size="8" fill="#64748b">정산 대사 & SLA 지표</text>
+  </svg>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:25%;">계층 (파이프라인 구간)</th>
+      <th style="width:35%;">담당 역할 및 책임</th>
+      <th style="width:40%;">기술적 고민 포인트 및 해결 방안</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>원천 ➔ Kafka (Debezium)</strong></td>
+      <td>트랜잭션 WAL을 캡처하여 토픽별 이벤트 스트림 발행</td>
+      <td><strong>[순서 보장]</strong> <code>order_id</code>를 카프카 메시지 Key로 지정하여 동일 주문 건은 항상 단일 파티션에 인입되도록 보장</td>
+    </tr>
+    <tr>
+      <td><strong>Kafka ➔ Bronze (Flink)</strong></td>
+      <td>원문(raw) 보존 및 Iceberg 테이블에 스트리밍 Append</td>
+      <td><strong>[Tombstone 처리]</strong> <code>WHERE payload IS NOT NULL</code>로 널 크래시 방지 및 10초 Checkpoint 단위 파일 커밋</td>
+    </tr>
+    <tr>
+      <td><strong>Bronze ➔ Silver (Spark)</strong></td>
+      <td>c/u/d 변경 이력을 병합(MERGE)하여 현재 최신 상태 유지</td>
+      <td><strong>[DELETE 반영]</strong> 비즈니스 분석 정합성을 위해 물리 삭제 대신 <code>is_deleted = TRUE</code>의 논리 삭제(Soft Delete) 적용</td>
+    </tr>
+    <tr>
+      <td><strong>Silver ➔ Gold (dbt)</strong></td>
+      <td>비즈니스 집계 지표 및 정산 마트 모델 빌드</td>
+      <td><strong>[실시간 vs 비용]</strong> 일간 배치와 준실시간 마이크로 배치를 분리하여 운영 리포트 구축</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="card" style="margin-top:6px; background:#f0fdf4; border-color:#bbf7d0; padding:6px 9px;">
+  <strong style="color:#166534; font-size:11px;">📊 3회차 Flink ➔ Iceberg Bronze 적재 실측 검증 (개인 랩 실행 확인)</strong>
+  <p style="margin-top:3px; font-size:10.5px; color:#14532d;">
+    • <strong>지연 시간 실측 (<code>measure-latency.sh</code>)</strong>: 원천 결제 INSERT 커밋 확인(t1) 후 Spark Bronze 첫 조회 관찰(t2)까지 <strong>6.56초</strong> 소요 확인.<br>
+    • <strong>Iceberg 메타데이터 검증</strong>: Flink Checkpoint 완료 후 MinIO S3에 신규 스냅샷이 생성되고, <code>metadata.json -> manifest-list -> manifest file -> parquet</code> 계층이 원자적으로 갱신됨을 실측으로 증명함.
+  </p>
+</div>
+
+</body>
+</html>

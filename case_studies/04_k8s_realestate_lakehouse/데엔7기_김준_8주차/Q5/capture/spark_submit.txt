@@ -1,0 +1,66 @@
+26/09/21 11:44:18 INFO SparkContext: Running Spark version 3.5.7
+26/09/21 11:44:18 INFO SparkContext: OS info Linux, 7.0.12-linuxkit, aarch64
+26/09/21 11:44:18 INFO SparkContext: Java version 17.0.20.1
+26/09/21 11:44:18 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/09/21 11:44:18 INFO ResourceUtils: ==============================================================
+26/09/21 11:44:18 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/09/21 11:44:18 INFO ResourceUtils: ==============================================================
+26/09/21 11:44:18 INFO SparkContext: Submitted application: process_stocks_junekim
+26/09/21 11:44:18 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/09/21 11:44:18 INFO ResourceProfile: Limiting resource is cpu
+26/09/21 11:44:18 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/09/21 11:44:18 INFO SecurityManager: Changing view acls to: airflow
+26/09/21 11:44:18 INFO SecurityManager: Changing modify acls to: airflow
+26/09/21 11:44:18 INFO SecurityManager: Changing view acls groups to: 
+26/09/21 11:44:18 INFO SecurityManager: Changing modify acls groups to: 
+26/09/21 11:44:18 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: airflow; groups with view permissions: EMPTY; users with modify permissions: airflow; groups with modify permissions: EMPTY
+26/09/21 11:44:18 INFO Utils: Successfully started service 'sparkDriver' on port 37327.
+26/09/21 11:44:18 INFO SparkEnv: Registering MapOutputTracker
+26/09/21 11:44:18 INFO SparkEnv: Registering BlockManagerMaster
+26/09/21 11:44:18 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/09/21 11:44:18 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/09/21 11:44:18 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/09/21 11:44:18 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-2cae840c-5840-466e-9dc9-28a025f36a66
+26/09/21 11:44:18 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/09/21 11:44:18 INFO SparkEnv: Registering OutputCommitCoordinator
+26/09/21 11:44:18 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/09/21 11:44:18 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/09/21 11:44:18 INFO Executor: Starting executor ID driver on host ac25532608e5
+26/09/21 11:44:18 INFO Executor: OS info Linux, 7.0.12-linuxkit, aarch64
+26/09/21 11:44:18 INFO Executor: Java version 17.0.20.1
+26/09/21 11:44:18 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/09/21 11:44:18 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@2b2b693f for default.
+26/09/21 11:44:18 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 39947.
+26/09/21 11:44:18 INFO NettyBlockTransferService: Server created on ac25532608e5:39947
+26/09/21 11:44:18 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/09/21 11:44:18 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, ac25532608e5, 39947, None)
+26/09/21 11:44:18 INFO BlockManagerMasterEndpoint: Registering block manager ac25532608e5:39947 with 434.4 MiB RAM, BlockManagerId(driver, ac25532608e5, 39947, None)
+26/09/21 11:44:18 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, ac25532608e5, 39947, None)
+26/09/21 11:44:18 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, ac25532608e5, 39947, None)
+Loading raw data from S3: s3a://realestate-junekim/stock/raw/stock_prices.csv
+=== 정제 후 스키마 ===
+root
+ |-- ticker: string (nullable = true)
+ |-- trade_date: date (nullable = true)
+ |-- open: double (nullable = true)
+ |-- high: double (nullable = true)
+ |-- low: double (nullable = true)
+ |-- close: double (nullable = true)
+ |-- volume: long (nullable = true)
+ |-- change_type: string (nullable = true)
+
+=== 종목별 집계 결과 ===
++------+---------+--------+-------+------------+
+|ticker|avg_close|max_high|min_low|total_volume|
++------+---------+--------+-------+------------+
+|AAPL  |204.01   |288.62  |124.17 |42740740000 |
+|JNJ   |161.98   |215.19  |140.68 |6814007700  |
+|JPM   |209.7    |330.86  |123.11 |7299229900  |
+|TSLA  |268.25   |498.83  |101.81 |82661596500 |
+|XOM   |111.11   |126.34  |95.77  |12490305000 |
++------+---------+--------+-------+------------+
+
+Saving cleaned stock data to S3 Silver: s3a://realestate-junekim/stock/silver
+Uploaded: s3://realestate-junekim/stock/silver/part-00000-1bd7c173-cd75-488e-81bc-42e480a4ec22-c000.snappy.parquet
+Uploaded: s3://realestate-junekim/stock/silver/_SUCCESS
+=== [과제 05] PySpark 주식 정제 및 집계 완료 ===

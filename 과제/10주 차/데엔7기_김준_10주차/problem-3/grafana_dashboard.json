@@ -1,0 +1,296 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "de10-kafka-monitor",
+    "title": "DE10 Kafka Cluster Monitoring",
+    "tags": [
+      "kafka",
+      "de10"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "5s",
+    "time": {
+      "from": "now-30m",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "type": "timeseries",
+        "title": "Under Replicated Partitions",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "cg17g6fwypssgd"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "fillOpacity": 10
+            }
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_server_replicamanager_underreplicatedpartitions{instance=~\"kafka-1.*\"}",
+            "legendFormat": "kafka-1",
+            "refId": "A"
+          },
+          {
+            "expr": "kafka_server_replicamanager_underreplicatedpartitions{instance=~\"kafka-2.*\"}",
+            "legendFormat": "kafka-2",
+            "refId": "B"
+          },
+          {
+            "expr": "kafka_server_replicamanager_underreplicatedpartitions{instance=~\"kafka-3.*\"}",
+            "legendFormat": "kafka-3",
+            "refId": "C"
+          },
+          {
+            "expr": "sum(kafka_server_replicamanager_underreplicatedpartitions)",
+            "legendFormat": "cluster total",
+            "refId": "D"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "type": "timeseries",
+        "title": "ISR Shrinks Per Sec",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "cg17g6fwypssgd"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "fillOpacity": 10
+            }
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_server_replicamanager_isrshrinkspersec_rate{instance=~\"kafka-1.*\"}",
+            "legendFormat": "kafka-1",
+            "refId": "A"
+          },
+          {
+            "expr": "kafka_server_replicamanager_isrshrinkspersec_rate{instance=~\"kafka-2.*\"}",
+            "legendFormat": "kafka-2",
+            "refId": "B"
+          },
+          {
+            "expr": "kafka_server_replicamanager_isrshrinkspersec_rate{instance=~\"kafka-3.*\"}",
+            "legendFormat": "kafka-3",
+            "refId": "C"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "type": "timeseries",
+        "title": "Active Controller Count",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "cg17g6fwypssgd"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "fillOpacity": 10
+            }
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_controller_kafkacontroller_activecontrollercount{instance=~\"kafka-1.*\"}",
+            "legendFormat": "kafka-1",
+            "refId": "A"
+          },
+          {
+            "expr": "kafka_controller_kafkacontroller_activecontrollercount{instance=~\"kafka-2.*\"}",
+            "legendFormat": "kafka-2",
+            "refId": "B"
+          },
+          {
+            "expr": "kafka_controller_kafkacontroller_activecontrollercount{instance=~\"kafka-3.*\"}",
+            "legendFormat": "kafka-3",
+            "refId": "C"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "type": "timeseries",
+        "title": "Bytes In Per Sec",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "cg17g6fwypssgd"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "fillOpacity": 20
+            },
+            "unit": "Bps"
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_server_brokertopicmetrics_bytesinpersec_rate{instance=~\"kafka-1.*\"}",
+            "legendFormat": "kafka-1",
+            "refId": "A"
+          },
+          {
+            "expr": "kafka_server_brokertopicmetrics_bytesinpersec_rate{instance=~\"kafka-2.*\"}",
+            "legendFormat": "kafka-2",
+            "refId": "B"
+          },
+          {
+            "expr": "kafka_server_brokertopicmetrics_bytesinpersec_rate{instance=~\"kafka-3.*\"}",
+            "legendFormat": "kafka-3",
+            "refId": "C"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 16
+        },
+        "type": "timeseries",
+        "title": "Request Latency (Produce, ms)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "cg17g6fwypssgd"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "fillOpacity": 15
+            },
+            "unit": "ms"
+          }
+        },
+        "targets": [
+          {
+            "expr": "kafka_network_requestmetrics_95thpercentile{name=\"TotalTimeMs\",request=\"Produce\",instance=~\"kafka-1.*\"}",
+            "legendFormat": "kafka-1 p95",
+            "refId": "A"
+          },
+          {
+            "expr": "kafka_network_requestmetrics_95thpercentile{name=\"TotalTimeMs\",request=\"Produce\",instance=~\"kafka-2.*\"}",
+            "legendFormat": "kafka-2 p95",
+            "refId": "B"
+          },
+          {
+            "expr": "kafka_network_requestmetrics_95thpercentile{name=\"TotalTimeMs\",request=\"Produce\",instance=~\"kafka-3.*\"}",
+            "legendFormat": "kafka-3 p95",
+            "refId": "C"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 24
+        },
+        "type": "stat",
+        "title": "sensor-readings \ub204\uc801 \uc720\uc785 \uba54\uc2dc\uc9c0 \uc218",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "cg17g6fwypssgd"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "blue",
+                  "value": null
+                },
+                {
+                  "color": "green",
+                  "value": 5000
+                }
+              ]
+            },
+            "unit": "none"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "textMode": "auto"
+        },
+        "targets": [
+          {
+            "expr": "sum(kafka_server_brokertopicmetrics_messagesinpersec_total{topic=\"sensor-readings\"}) or vector(0)",
+            "legendFormat": "Messages",
+            "refId": "A",
+            "instant": true
+          }
+        ]
+      }
+    ]
+  },
+  "overwrite": true
+}

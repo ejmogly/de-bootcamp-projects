@@ -1,0 +1,1072 @@
+commit ef06f595d1771bbd89930e14f83d2c2f87dd1018
+Merge: e6ad2b9 f8408b5
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Wed Sep 16 03:54:33 2026 +0900
+
+    Q10-4: Merge branch 'feature/review' into master (충돌 해결 완료)
+
+commit e6ad2b94ed535dee70a8c6e367bfb3081b2096d6
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Wed Sep 16 03:52:57 2026 +0900
+
+    Q10-3: [master] 실습 환경 아키텍처 명시 및 master 관점 회고 작성
+
+diff --git a/README.md b/README.md
+index 932a807..08bd208 100644
+--- a/README.md
++++ b/README.md
+@@ -3,8 +3,8 @@
+ - 레포지토리: https://github.com/ejmogly/de7-JuneKim-w7
+ 
+ ## 실습 환경
+-- OS: macOS (Apple Silicon M-Series)
+-- Docker: Airflow 2.8.1 및 Spark 3.5.7 환경
++- OS: macOS 환경 (aarch64 아키텍처 로컬 환경)
++- Docker: 커스텀 빌드된 week7-airflow 이미지 및 Apache Spark 분산 환경
+ 
+ ## 회고
+-- 7주차 데이터 엔지니어링 파이프라인 실습 진행 중입니다.
++- master 브랜치 관점: AWS IAM 권한 설정과 S3 연동, Parquet 기반 변환 데이터 적재 파이프라인 구축을 성공적으로 완수했습니다.
+
+commit f8408b5e14b2a1fb9816aa6dd974ec840c81b59f
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Wed Sep 16 03:52:02 2026 +0900
+
+    Q10-2: [feature/review] 실습 환경 상세 스펙 및 feature 관점 회고 작성
+
+diff --git a/README.md b/README.md
+index 932a807..3ae4257 100644
+--- a/README.md
++++ b/README.md
+@@ -3,8 +3,8 @@
+ - 레포지토리: https://github.com/ejmogly/de7-JuneKim-w7
+ 
+ ## 실습 환경
+-- OS: macOS (Apple Silicon M-Series)
+-- Docker: Airflow 2.8.1 및 Spark 3.5.7 환경
++- OS: macOS 환경 (Docker Desktop 가상화 컨테이너)
++- Docker: Airflow 2.8.1 (CeleryExecutor) 및 Spark 3.5.7 Standalone 클러스터
+ 
+ ## 회고
+-- 7주차 데이터 엔지니어링 파이프라인 실습 진행 중입니다.
++- feature 브랜치 관점: Docker Compose를 활용한 다중 컨테이너 분산 처리와 Airflow를 통한 파이프라인 자동화의 유용성을 깊이 체감했습니다.
+
+commit 3c0dc269f4a8575597f0b76a66844507b9716821
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Wed Sep 16 03:50:13 2026 +0900
+
+    Q10-1: README.md에 실습 환경 및 회고 기본 섹션 추가
+
+diff --git a/README.md b/README.md
+index 1c4a91d..932a807 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,10 @@
+ # 데엔7기_김준_7주차 프로젝트
+ - 작성자: 김준 (데엔 7기)
+ - 레포지토리: https://github.com/ejmogly/de7-JuneKim-w7
++
++## 실습 환경
++- OS: macOS (Apple Silicon M-Series)
++- Docker: Airflow 2.8.1 및 Spark 3.5.7 환경
++
++## 회고
++- 7주차 데이터 엔지니어링 파이프라인 실습 진행 중입니다.
+
+commit 2e7f6738da6a82dca7f71b757fae5f6f2f686cc6
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Wed Sep 16 03:45:16 2026 +0900
+
+    Q9: Airflow S3 및 Spark 통합 파이프라인(weekly_pipeline) 구축
+
+diff --git a/dags/jobs/transform.py b/dags/jobs/transform.py
+new file mode 100644
+index 0000000..bf9d405
+--- /dev/null
++++ b/dags/jobs/transform.py
+@@ -0,0 +1,61 @@
++import os
++import sys
++import argparse
++from pyspark.sql import SparkSession
++from pyspark.sql.functions import col, split, explode, trim
++
++def main():
++    parser = argparse.ArgumentParser(description="Netflix Titles Transformation via PySpark")
++    parser.add_argument("--input", default="/tmp/data/netflix_titles.csv", help="Input CSV path")
++    parser.add_argument("--output", default="/tmp/data/silver_output", help="Output Parquet directory path")
++    parser.add_argument("--year", type=int, default=2015, help="Release year filter (>= year)")
++    args = parser.parse_args()
++
++    input_path = args.input
++    output_path = args.output
++    min_year = args.year
++
++    print("=" * 60)
++    print("=== [과제 09] Spark 변환 작업 시작 (jobs/transform.py) ===")
++    print(f" - 입력 경로: {input_path}")
++    print(f" - 출력 경로: {output_path}")
++    print(f" - 기준 연도: {min_year}")
++    print("=" * 60)
++
++    # 1. SparkSession 생성
++    spark = SparkSession.builder \
++        .appName("NetflixTransformJuneKim") \
++        .getOrCreate()
++
++    # 2. CSV 데이터 로드
++    df = spark.read.option("header", "true").option("inferSchema", "true").csv(input_path)
++    total_raw_count = df.count()
++    print(f"[1] 원본 데이터 로드 완료: 총 {total_raw_count:,} 행")
++
++    # 3. release_year >= 기준연도 필터
++    filtered_df = df.filter(col("release_year") >= min_year)
++    filtered_count = filtered_df.count()
++    print(f"[2] 기준 연도({min_year}년 이상) 필터링 완료: {filtered_count:,} 행")
++
++    # 4. listed_in 장르 쉼표 분리 후 행 전개(explode) 및 공백 제거(trim)
++    exploded_df = filtered_df.withColumn("genre", explode(split(col("listed_in"), ","))) \
++                             .withColumn("genre", trim(col("genre")))
++
++    # 5. type x genre 별 작품 수 집계
++    aggregated_df = exploded_df.groupBy("type", "genre").count().orderBy(col("count").desc())
++    agg_row_count = aggregated_df.count()
++    print(f"[3] type x genre 별 작품 수 집계 완료: 총 {agg_row_count:,} 개 그룹")
++
++    print("\n=== 상위 20개 집계 결과 미리보기 ===")
++    aggregated_df.show(20, truncate=False)
++
++    # 6. 결과 Parquet(Snappy 압축)로 저장
++    print(f"\n[4] Parquet(Snappy 압축) 파일로 저장 중... -> {output_path}")
++    aggregated_df.write.mode("overwrite").option("compression", "snappy").parquet(output_path)
++    print("[5] Parquet 저장 성공 완료!")
++    print("=" * 60)
++
++    spark.stop()
++
++if __name__ == "__main__":
++    main()
+diff --git a/dags/weekly_pipeline_junekim.py b/dags/weekly_pipeline_junekim.py
+new file mode 100644
+index 0000000..805ea1a
+--- /dev/null
++++ b/dags/weekly_pipeline_junekim.py
+@@ -0,0 +1,112 @@
++import os
++import sys
++from datetime import datetime, timedelta
++from airflow import DAG
++from airflow.operators.python import PythonOperator
++from airflow.operators.bash import BashOperator
++
++default_args = {
++    "owner": "junekim",
++    "start_date": datetime(2026, 9, 1),
++    "retries": 1,
++    "retry_delay": timedelta(minutes=1),
++}
++
++BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "de-7-junekim")
++BRONZE_KEY = "bronze/netflix_titles.csv"
++CONTAINER_DATA_DIR = "/tmp/data"
++LOCAL_CSV_PATH = f"{CONTAINER_DATA_DIR}/netflix_titles.csv"
++LOCAL_OUTPUT_DIR = f"{CONTAINER_DATA_DIR}/silver_output"
++
++
++def get_s3_client():
++    """Airflow Connection(aws_default) 또는 환경변수를 통해 boto3 s3 클라이언트를 안전하게 반환 (키 하드코딩 금지)"""
++    try:
++        from airflow.providers.amazon.aws.hooks.s3 import S3Hook
++        hook = S3Hook(aws_conn_id="aws_default")
++        client = hook.get_conn()
++        if client:
++            return client
++    except Exception:
++        pass
++
++    import boto3
++    return boto3.client(
++        "s3",
++        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
++        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
++        region_name=os.environ.get("AWS_DEFAULT_REGION", "ap-northeast-2"),
++    )
++
++
++def download_bronze_from_s3():
++    """Task 1: boto3로 S3 bronze CSV 컨테이너 다운로드"""
++    print(f"=== [Task 1] S3 Bronze 데이터 다운로드 시작 (s3://{BUCKET_NAME}/{BRONZE_KEY}) ===")
++    os.makedirs(CONTAINER_DATA_DIR, exist_ok=True)
++    
++    s3 = get_s3_client()
++    s3.download_file(BUCKET_NAME, BRONZE_KEY, LOCAL_CSV_PATH)
++    
++    file_size = os.path.getsize(LOCAL_CSV_PATH)
++    print(f"[SUCCESS] CSV 다운로드 완료: {LOCAL_CSV_PATH} ({file_size:,} bytes)")
++
++
++def upload_silver_to_s3(**kwargs):
++    """Task 3: boto3로 Parquet 결과를 s3://{버킷}/silver/{오늘날짜}/ 에 업로드"""
++    execution_date_str = kwargs.get("ds", datetime.now().strftime("%Y-%m-%d"))
++    s3_prefix = f"silver/{execution_date_str}"
++    
++    print(f"=== [Task 3] S3 Silver 데이터 업로드 시작 (s3://{BUCKET_NAME}/{s3_prefix}/) ===")
++    s3 = get_s3_client()
++    
++    if not os.path.exists(LOCAL_OUTPUT_DIR):
++        raise FileNotFoundError(f"출력 디렉터리가 존재하지 않습니다: {LOCAL_OUTPUT_DIR}")
++    
++    uploaded_files = []
++    for root, _, files in os.walk(LOCAL_OUTPUT_DIR):
++        for file in files:
++            # 숨김 파일이나 체크섬 crc 제외하고 parquet 및 _SUCCESS 메타 파일 업로드
++            if file.startswith(".") or file.endswith(".crc"):
++                continue
++            local_file = os.path.join(root, file)
++            s3_key = f"{s3_prefix}/{file}"
++            s3.upload_file(local_file, BUCKET_NAME, s3_key)
++            size = os.path.getsize(local_file)
++            uploaded_files.append((s3_key, size))
++            print(f"  - 업로드 완료: s3://{BUCKET_NAME}/{s3_key} ({size:,} bytes)")
++            
++    print(f"[SUCCESS] 총 {len(uploaded_files)}개 파일 Silver 영역 업로드 성공!")
++
++
++with DAG(
++    dag_id="weekly_pipeline_junekim",
++    default_args=default_args,
++    schedule="@weekly",
++    catchup=False,
++    tags=["과제09", "Q9", "S3", "Spark"],
++) as dag:
++
++    # Task 1: boto3로 S3 bronze CSV 다운로드
++    task_download = PythonOperator(
++        task_id="download_bronze_csv",
++        python_callable=download_bronze_from_s3,
++    )
++
++    # Task 2: spark-submit으로 jobs/transform.py 실행
++    task_spark = BashOperator(
++        task_id="spark_transform_job",
++        bash_command=(
++            "spark-submit --master local[*] /opt/airflow/dags/jobs/transform.py "
++            f"--input {LOCAL_CSV_PATH} "
++            f"--output {LOCAL_OUTPUT_DIR} "
++            "--year 2015"
++        ),
++    )
++
++    # Task 3: boto3로 결과를 s3://{버킷}/silver/{오늘날짜}/에 업로드
++    task_upload = PythonOperator(
++        task_id="upload_silver_parquet",
++        python_callable=upload_silver_to_s3,
++    )
++
++    task_download >> task_spark >> task_upload
+diff --git a/jobs/transform.py b/jobs/transform.py
+new file mode 100644
+index 0000000..bf9d405
+--- /dev/null
++++ b/jobs/transform.py
+@@ -0,0 +1,61 @@
++import os
++import sys
++import argparse
++from pyspark.sql import SparkSession
++from pyspark.sql.functions import col, split, explode, trim
++
++def main():
++    parser = argparse.ArgumentParser(description="Netflix Titles Transformation via PySpark")
++    parser.add_argument("--input", default="/tmp/data/netflix_titles.csv", help="Input CSV path")
++    parser.add_argument("--output", default="/tmp/data/silver_output", help="Output Parquet directory path")
++    parser.add_argument("--year", type=int, default=2015, help="Release year filter (>= year)")
++    args = parser.parse_args()
++
++    input_path = args.input
++    output_path = args.output
++    min_year = args.year
++
++    print("=" * 60)
++    print("=== [과제 09] Spark 변환 작업 시작 (jobs/transform.py) ===")
++    print(f" - 입력 경로: {input_path}")
++    print(f" - 출력 경로: {output_path}")
++    print(f" - 기준 연도: {min_year}")
++    print("=" * 60)
++
++    # 1. SparkSession 생성
++    spark = SparkSession.builder \
++        .appName("NetflixTransformJuneKim") \
++        .getOrCreate()
++
++    # 2. CSV 데이터 로드
++    df = spark.read.option("header", "true").option("inferSchema", "true").csv(input_path)
++    total_raw_count = df.count()
++    print(f"[1] 원본 데이터 로드 완료: 총 {total_raw_count:,} 행")
++
++    # 3. release_year >= 기준연도 필터
++    filtered_df = df.filter(col("release_year") >= min_year)
++    filtered_count = filtered_df.count()
++    print(f"[2] 기준 연도({min_year}년 이상) 필터링 완료: {filtered_count:,} 행")
++
++    # 4. listed_in 장르 쉼표 분리 후 행 전개(explode) 및 공백 제거(trim)
++    exploded_df = filtered_df.withColumn("genre", explode(split(col("listed_in"), ","))) \
++                             .withColumn("genre", trim(col("genre")))
++
++    # 5. type x genre 별 작품 수 집계
++    aggregated_df = exploded_df.groupBy("type", "genre").count().orderBy(col("count").desc())
++    agg_row_count = aggregated_df.count()
++    print(f"[3] type x genre 별 작품 수 집계 완료: 총 {agg_row_count:,} 개 그룹")
++
++    print("\n=== 상위 20개 집계 결과 미리보기 ===")
++    aggregated_df.show(20, truncate=False)
++
++    # 6. 결과 Parquet(Snappy 압축)로 저장
++    print(f"\n[4] Parquet(Snappy 압축) 파일로 저장 중... -> {output_path}")
++    aggregated_df.write.mode("overwrite").option("compression", "snappy").parquet(output_path)
++    print("[5] Parquet 저장 성공 완료!")
++    print("=" * 60)
++
++    spark.stop()
++
++if __name__ == "__main__":
++    main()
+
+commit 50a0595630ba97cef565f97910364e5587b8867c
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Wed Sep 16 02:47:48 2026 +0900
+
+    Q8: IAM 및 S3 연동 데이터 다운로드 스크립트 작성
+
+diff --git a/s3_download.py b/s3_download.py
+new file mode 100644
+index 0000000..8bdaa2e
+--- /dev/null
++++ b/s3_download.py
+@@ -0,0 +1,78 @@
++import os
++import sys
++import csv
++import boto3
++
++def main():
++    # 1. 버킷명 주입 (실행 인자 우선, 환경변수/기본값 사용, 키 하드코딩 금지)
++    if len(sys.argv) > 1:
++        bucket_name = sys.argv[1]
++    else:
++        bucket_name = os.environ.get("S3_BUCKET_NAME", "de-7-junekim")
++
++    print("=" * 60)
++    print(f"=== [과제 08] S3 연동 및 데이터 다운로드 (버킷: {bucket_name}) ===")
++    print("=" * 60)
++
++    # 2. boto3 S3 클라이언트 생성 (로컬 aws configure 자격증명 자동 사용)
++    s3 = boto3.client("s3")
++
++    # 3. 버킷 내 객체 목록 및 크기 출력
++    print("\n[1] S3 버킷 객체 목록 및 크기:")
++    response = s3.list_objects_v2(Bucket=bucket_name)
++    contents = response.get("Contents", [])
++
++    if not contents:
++        print("    버킷에 파일이 존재하지 않습니다.")
++        return
++
++    for item in contents:
++        print(f"    - Key: {item['Key']} | Size: {item['Size']:,} bytes | LastModified: {item['LastModified']}")
++
++    # 4. project/data/ 로 다운로드 (bronze/netflix_titles.csv 우선 탐색)
++    target_key = None
++    if len(sys.argv) > 2:
++        target_key = sys.argv[2]
++    else:
++        for item in contents:
++            if item["Key"] == "bronze/netflix_titles.csv":
++                target_key = item["Key"]
++                break
++        if not target_key:
++            for item in contents:
++                if item["Key"].endswith(".csv"):
++                    target_key = item["Key"]
++                    break
++        if not target_key:
++            target_key = "bronze/netflix_titles.csv"
++
++    file_name = os.path.basename(target_key)
++    current_dir = os.path.dirname(os.path.abspath(__file__))
++    download_dir = os.path.join(current_dir, "data")
++    os.makedirs(download_dir, exist_ok=True)
++    local_file_path = os.path.join(download_dir, file_name)
++
++    print(f"\n[2] S3 객체 '{target_key}' 다운로드 진행 중...")
++    s3.download_file(bucket_name, target_key, local_file_path)
++    file_size = os.path.getsize(local_file_path)
++    print(f"    - 저장 경로: {local_file_path}")
++    print(f"    - 다운로드 완료 크기: {file_size:,} bytes")
++
++    # 5. CSV 레코드 행 수 출력
++    print("\n[3] 다운로드된 CSV 파일 검증:")
++    with open(local_file_path, "r", encoding="utf-8") as f:
++        reader = csv.reader(f)
++        header = next(reader)
++        data_rows = list(reader)
++        row_count = len(data_rows)
++
++    print(f"    - 헤더 컬럼 ({len(header)}개): {header[:5]} ... 등 총 {len(header)}개 컬럼")
++    print(f"    - 데이터 레코드 수(헤더 제외): {row_count:,} 행")
++    print(f"    - 상위 3행 미리보기:")
++    for idx, row in enumerate(data_rows[:3], 1):
++        print(f"      [{idx}] {row[0]}, {row[1]}, {row[2]} ({row[7]})")
++    print("=" * 60)
++
++
++if __name__ == "__main__":
++    main()
+
+commit a0c8670a23024f63a8e5e839a90ad4199751c663
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Tue Sep 15 20:56:36 2026 +0900
+
+    Q7: Airflow 백필(Backfill) DAG 및 산출물 생성 구현
+
+diff --git a/dags/backfill_demo_junekim.py b/dags/backfill_demo_junekim.py
+new file mode 100644
+index 0000000..e408f11
+--- /dev/null
++++ b/dags/backfill_demo_junekim.py
+@@ -0,0 +1,37 @@
++import os
++from datetime import datetime, timedelta
++from airflow import DAG
++from airflow.operators.python import PythonOperator
++
++default_args = {
++    "owner": "airflow",
++    "retries": 1,
++    "retry_delay": timedelta(minutes=1),
++}
++
++# 실행별 산출물 생성: logical date(ds: YYYY-MM-DD)를 파일명에 반영하여 컨테이너 내 저장
++def create_daily_file(**context):
++    ds = context["ds"]  # YYYY-MM-DD 형식의 logical date
++    file_path = f"/tmp/daily_{ds}.txt"
++
++    with open(file_path, "w", encoding="utf-8") as f:
++        f.write(f"Logical Date: {ds}\n")
++        f.write(f"Execution Time: {context['ts']}\n")
++        f.write("Status: Backfill SUCCESS\n")
++
++    print(f"=== [backfill_task] 파일 생성 완료: {file_path} ===")
++
++
++with DAG(
++    dag_id="backfill_demo_junekim",
++    default_args=default_args,
++    start_date=datetime(2026, 9, 8),    # 작업일(2026-09-15) 기준 7일 전 고정 리터럴
++    schedule_interval="@daily",         # 매일 1회 스케줄
++    catchup=True,                       # 과거 7일 구간 자동 백필 실행
++    tags=["Q7", "Backfill", "Catchup"],
++) as dag:
++
++    backfill_task = PythonOperator(
++        task_id="create_daily_file_task",
++        python_callable=create_daily_file,
++    )
+
+commit b361947ab3288e584164c053b3ffa93c7f14f43c
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Tue Sep 15 16:51:29 2026 +0900
+
+    Q6: Airflow XCom 전달 및 재시도(Retry) 구현
+
+diff --git a/dags/xcom_demo_junekim.py b/dags/xcom_demo_junekim.py
+new file mode 100644
+index 0000000..b6f70d2
+--- /dev/null
++++ b/dags/xcom_demo_junekim.py
+@@ -0,0 +1,61 @@
++from datetime import datetime, timedelta
++from airflow import DAG
++from airflow.operators.python import PythonOperator
++
++default_args = {
++    "owner": "airflow",
++    "start_date": datetime(2026, 1, 1),
++    "catchup": False,
++}
++
++# 1. 앞 작업: 1회차 고의 실패 -> 2회차 재시도 성공 후 값 return (XCom 자동 push)
++def calculate_with_retry(**context):
++    ti = context["ti"]
++    try_number = ti.try_number
++    print(f"=== [calculate_task] 현재 시도 횟수(try_number): {try_number} ===")
++
++    # 첫 번째 시도(1회차)에서는 고의로 예외를 발생시켜 재시도 유도
++    if try_number < 2:
++        print(f"시도 {try_number}: 재시도 검증을 위해 의도적으로 에러를 발생시킵니다.")
++        raise RuntimeError(f"의도적 실패 발생 (시도 {try_number})")
++
++    # 두 번째 시도(2회차)부터 정상 계산 수행 및 반환
++    calculated_value = 42 * 100  # 4200
++    print(f"시도 {try_number}: 재시도 성공! 계산된 결과값: {calculated_value}")
++    return calculated_value
++
++
++# 2. 뒤 작업: xcom_pull로 앞 작업의 반환값을 받아 로그에 출력
++def pull_and_log(**context):
++    ti = context["ti"]
++    pulled_value = ti.xcom_pull(task_ids="calculate_task")
++    print("=" * 50)
++    print(f"=== [pull_task] XCom으로 수신한 값: {pulled_value} ===")
++    print("=" * 50)
++    return f"Processed value: {pulled_value}"
++
++
++with DAG(
++    dag_id="xcom_demo_junekim",
++    default_args=default_args,
++    schedule_interval=None,  # 수동 트리거 실행
++    catchup=False,
++    tags=["Q6", "XCom", "Retry"],
++) as dag:
++
++    # 앞 작업: retries 2회 이상, 재시도 간격 5초 설정
++    calculate_task = PythonOperator(
++        task_id="calculate_task",
++        python_callable=calculate_with_retry,
++        retries=2,                          # 2회 이상 재시도 설정
++        retry_delay=timedelta(seconds=5),   # 5초 후 재시도
++    )
++
++    # 뒤 작업
++    pull_task = PythonOperator(
++        task_id="pull_task",
++        python_callable=pull_and_log,
++    )
++
++    # 태스크 순차 연결
++    calculate_task >> pull_task
+
+commit c9c270ecb7ad0211d2b8ab90e6ce9f434ee21d0e
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Tue Sep 15 16:36:54 2026 +0900
+
+    Q5: 커스텀 Airflow 이미지 빌드 환경 구성 (JDK, providers 추가)
+
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+index 0000000..c0043e5
+--- /dev/null
++++ b/Dockerfile
+@@ -0,0 +1,19 @@
++FROM apache/airflow:2.8.1
++
++USER root
++# 1. Java (OpenJDK 17) 설치
++RUN apt-get update \
++    && apt-get install -y --no-install-recommends \
++        openjdk-17-jdk-headless \
++    && apt-get clean \
++    && rm -rf /var/lib/apt/lists/*
++
++# 2. JAVA_HOME 설정 (아키텍처 호환)
++RUN ln -s /usr/lib/jvm/java-17-openjdk-* /usr/lib/jvm/default-java
++ENV JAVA_HOME=/usr/lib/jvm/default-java
++ENV PATH="${JAVA_HOME}/bin:${PATH}"
++
++# 3. Airflow 사용자로 복귀 및 파이썬 패키지 설치
++USER airflow
++COPY requirements.txt /
++RUN pip install --no-cache-dir -r /requirements.txt
+diff --git a/docker-compose.yaml b/docker-compose.yaml
+index 541e06f..6f89d34 100644
+--- a/docker-compose.yaml
++++ b/docker-compose.yaml
+@@ -49,8 +49,8 @@ x-airflow-common:
+   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
+   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
+   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
+-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.8.1}
+-  # build: .
++  image: week7-airflow:junekim
++  build: .
+   environment:
+     &airflow-common-env
+     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+diff --git a/requirements.txt b/requirements.txt
+new file mode 100644
+index 0000000..fc8e48f
+--- /dev/null
++++ b/requirements.txt
+@@ -0,0 +1,3 @@
++apache-airflow-providers-amazon
++apache-airflow-providers-apache-spark
++pyspark==3.5.7
+
+commit 356f0c2ca87c463a1ef09f06d5c2c6a56fb06533
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Tue Sep 15 16:18:34 2026 +0900
+
+    Q4: Spark Standalone 클러스터 구축 및 wordcount 작업 제출
+
+diff --git a/docker-compose.spark.yaml b/docker-compose.spark.yaml
+new file mode 100644
+index 0000000..823ed83
+--- /dev/null
++++ b/docker-compose.spark.yaml
+@@ -0,0 +1,29 @@
++version: '3.8'
++
++services:
++  spark-master:
++    image: apache/spark:3.5.7-python3
++    container_name: spark-master
++    hostname: spark-master
++    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
++    ports:
++      - "7077:7077"
++      - "9090:8080"
++    volumes:
++      - ./jobs:/opt/spark/jobs
++      - ./data:/opt/spark/data
++    working_dir: /opt/spark
++
++  spark-worker:
++    image: apache/spark:3.5.7-python3
++    container_name: spark-worker-1
++    hostname: spark-worker-1
++    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
++    depends_on:
++      - spark-master
++    ports:
++      - "8081:8081"
++    volumes:
++      - ./jobs:/opt/spark/jobs
++      - ./data:/opt/spark/data
++    working_dir: /opt/spark
+diff --git a/jobs/wordcount.py b/jobs/wordcount.py
+new file mode 100644
+index 0000000..f89872f
+--- /dev/null
++++ b/jobs/wordcount.py
+@@ -0,0 +1,36 @@
++import os
++import sys
++from pyspark.sql import SparkSession
++from pyspark.sql import functions as F
++
++def main():
++    spark = SparkSession.builder \
++        .appName("WordCount") \
++        .getOrCreate()
++
++    # 불필요한 INFO 로그를 줄여 결과 표가 잘 보이도록 설정
++    spark.sparkContext.setLogLevel("WARN")
++
++    # 입력 경로 (컨테이너 내 /opt/spark/data/wordcount.txt)
++    input_path = "data/wordcount.txt"
++    if not os.path.exists(input_path):
++        input_path = "/opt/spark/data/wordcount.txt"
++
++    # 1. 텍스트 파일 읽기
++    df = spark.read.text(input_path)
++
++    # 2. 공백 기준 분리 (소문자 변환 / 구두점 제거 금지)
++    # 줄바꿈/빈 줄에서 생기는 공백 문자열("") 필터링
++    words = df.select(F.explode(F.split(df.value, " ")).alias("word"))
++    words = words.filter(F.col("word") != "")
++
++    # 3. 빈도 내림차순 상위 20개 .show()
++    word_counts = words.groupBy("word").count().orderBy(F.col("count").desc())
++
++    print("\n=== WordCount 빈도 내림차순 상위 20개 ===")
++    word_counts.show(20, truncate=False)
++
++    spark.stop()
++
++if __name__ == "__main__":
++    main()
+
+commit e7ec2d55c1785729fcd47f5ad0056d4052cc160f
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Tue Sep 15 14:33:04 2026 +0900
+
+    Q3: Airflow compose 환경 구축 및 sample_dag 작성
+
+diff --git a/.env b/.env
+new file mode 100644
+index 0000000..cbe0602
+--- /dev/null
++++ b/.env
+@@ -0,0 +1 @@
++AIRFLOW_UID=50000
+diff --git a/dags/sample_dag.py b/dags/sample_dag.py
+new file mode 100644
+index 0000000..540782e
+--- /dev/null
++++ b/dags/sample_dag.py
+@@ -0,0 +1,47 @@
++from datetime import datetime, timedelta
++from airflow import DAG
++from airflow.operators.empty import EmptyOperator
++from airflow.operators.python import PythonOperator
++
++default_args = {
++    "owner": "airflow",
++    "start_date": datetime(2026, 1, 1),
++    "retries": 1,
++    "retry_delay": timedelta(minutes=1),
++}
++
++# 1. 파이썬 작업 1 (문자열 return - print 아님)
++def python_step_1():
++    return "Step 1 completed successfully"
++
++# 2. 파이썬 작업 2 (문자열 return - print 아님)
++def python_step_2():
++    return "Step 2 completed successfully"
++
++with DAG(
++    dag_id="sample_dag",
++    default_args=default_args,
++    schedule_interval="@daily",  # 매일 1회 스케줄
++    catchup=False,               # 과거 구간 자동 실행 방지
++    tags=["Q3", "과제03"],
++) as dag:
++
++    # 시작: EmptyOperator (동작 없음)
++    start_task = EmptyOperator(task_id="start")
++
++    # 파이썬 작업 2개
++    task_1 = PythonOperator(
++        task_id="python_task_1",
++        python_callable=python_step_1,
++    )
++
++    task_2 = PythonOperator(
++        task_id="python_task_2",
++        python_callable=python_step_2,
++    )
++
++    # 종료: EmptyOperator (동작 없음)
++    end_task = EmptyOperator(task_id="end")
++
++    # 총 4개 task 순차 연결
++    start_task >> task_1 >> task_2 >> end_task
+diff --git a/docker-compose.yaml b/docker-compose.yaml
+new file mode 100644
+index 0000000..541e06f
+--- /dev/null
++++ b/docker-compose.yaml
+@@ -0,0 +1,283 @@
++# Licensed to the Apache Software Foundation (ASF) under one
++# or more contributor license agreements.  See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership.  The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License.  You may obtain a copy of the License at
++#
++#   http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing,
++# software distributed under the License is distributed on an
++# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++# KIND, either express or implied.  See the License for the
++# specific language governing permissions and limitations
++# under the License.
++#
++
++# Basic Airflow cluster configuration for CeleryExecutor with Redis and PostgreSQL.
++#
++# WARNING: This configuration is for local development. Do not use it in a production deployment.
++#
++# This configuration supports basic configuration using environment variables or an .env file
++# The following variables are supported:
++#
++# AIRFLOW_IMAGE_NAME           - Docker image name used to run Airflow.
++#                                Default: apache/airflow:2.8.1
++# AIRFLOW_UID                  - User ID in Airflow containers
++#                                Default: 50000
++# AIRFLOW_PROJ_DIR             - Base path to which all the files will be volumed.
++#                                Default: .
++# Those configurations are useful mostly in case of standalone testing/running Airflow in test/try-out mode
++#
++# _AIRFLOW_WWW_USER_USERNAME   - Username for the administrator account (if requested).
++#                                Default: airflow
++# _AIRFLOW_WWW_USER_PASSWORD   - Password for the administrator account (if requested).
++#                                Default: airflow
++# _PIP_ADDITIONAL_REQUIREMENTS - Additional PIP requirements to add when starting all containers.
++#                                Use this option ONLY for quick checks. Installing requirements at container
++#                                startup is done EVERY TIME the service is started.
++#                                A better way is to build a custom image or extend the official image
++#                                as described in https://airflow.apache.org/docs/docker-stack/build.html.
++#                                Default: ''
++#
++# Feel free to modify this file to suit your needs.
++---
++x-airflow-common:
++  &airflow-common
++  # In order to add custom dependencies or upgrade provider packages you can use your extended image.
++  # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
++  # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
++  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.8.1}
++  # build: .
++  environment:
++    &airflow-common-env
++    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
++    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
++    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
++    AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
++    AIRFLOW__CORE__FERNET_KEY: ''
++    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
++    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
++    AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
++    # yamllint disable rule:line-length
++    # Use simple http server on scheduler for health checks
++    # See https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/logging-monitoring/check-health.html#scheduler-health-check-server
++    # yamllint enable rule:line-length
++    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
++    # WARNING: Use _PIP_ADDITIONAL_REQUIREMENTS option ONLY for a quick checks
++    # for other purpose (development, test and especially production usage) build/extend Airflow image.
++    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
++  volumes:
++    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
++    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
++    - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
++    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
++  user: "${AIRFLOW_UID:-50000}:0"
++  depends_on:
++    &airflow-common-depends-on
++    redis:
++      condition: service_healthy
++    postgres:
++      condition: service_healthy
++
++services:
++  postgres:
++    image: postgres:13
++    environment:
++      POSTGRES_USER: airflow
++      POSTGRES_PASSWORD: airflow
++      POSTGRES_DB: airflow
++    volumes:
++      - postgres-db-volume:/var/lib/postgresql/data
++    healthcheck:
++      test: ["CMD", "pg_isready", "-U", "airflow"]
++      interval: 10s
++      retries: 5
++      start_period: 5s
++    restart: always
++
++  redis:
++    image: redis:latest
++    expose:
++      - 6379
++    healthcheck:
++      test: ["CMD", "redis-cli", "ping"]
++      interval: 10s
++      timeout: 30s
++      retries: 50
++      start_period: 30s
++    restart: always
++
++  airflow-webserver:
++    <<: *airflow-common
++    command: webserver
++    ports:
++      - "8080:8080"
++    healthcheck:
++      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
++      interval: 30s
++      timeout: 10s
++      retries: 5
++      start_period: 30s
++    restart: always
++    depends_on:
++      <<: *airflow-common-depends-on
++      airflow-init:
++        condition: service_completed_successfully
++
++  airflow-scheduler:
++    <<: *airflow-common
++    command: scheduler
++    healthcheck:
++      test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
++      interval: 30s
++      timeout: 10s
++      retries: 5
++      start_period: 30s
++    restart: always
++    depends_on:
++      <<: *airflow-common-depends-on
++      airflow-init:
++        condition: service_completed_successfully
++
++  airflow-worker:
++    <<: *airflow-common
++    command: celery worker
++    healthcheck:
++      # yamllint disable rule:line-length
++      test:
++        - "CMD-SHELL"
++        - 'celery --app airflow.providers.celery.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}" || celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"'
++      interval: 30s
++      timeout: 10s
++      retries: 5
++      start_period: 30s
++    environment:
++      <<: *airflow-common-env
++      # Required to handle warm shutdown of the celery workers properly
++      # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
++      DUMB_INIT_SETSID: "0"
++    restart: always
++    depends_on:
++      <<: *airflow-common-depends-on
++      airflow-init:
++        condition: service_completed_successfully
++
++  airflow-triggerer:
++    <<: *airflow-common
++    command: triggerer
++    healthcheck:
++      test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
++      interval: 30s
++      timeout: 10s
++      retries: 5
++      start_period: 30s
++    restart: always
++    depends_on:
++      <<: *airflow-common-depends-on
++      airflow-init:
++        condition: service_completed_successfully
++
++  airflow-init:
++    <<: *airflow-common
++    entrypoint: /bin/bash
++    # yamllint disable rule:line-length
++    command:
++      - -c
++      - |
++        if [[ -z "${AIRFLOW_UID}" ]]; then
++          echo
++          echo -e "\033[1;33mWARNING!!!: AIRFLOW_UID not set!\e[0m"
++          echo "If you are on Linux, you SHOULD follow the instructions below to set "
++          echo "AIRFLOW_UID environment variable, otherwise files will be owned by root."
++          echo "For other operating systems you can get rid of the warning with manually created .env file:"
++          echo "    See: https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#setting-the-right-airflow-user"
++          echo
++        fi
++        one_meg=1048576
++        mem_available=$$(($$(getconf _PHYS_PAGES) * $$(getconf PAGE_SIZE) / one_meg))
++        cpus_available=$$(grep -cE 'cpu[0-9]+' /proc/stat)
++        disk_available=$$(df / | tail -1 | awk '{print $$4}')
++        warning_resources="false"
++        if (( mem_available < 4000 )) ; then
++          echo
++          echo -e "\033[1;33mWARNING!!!: Not enough memory available for Docker.\e[0m"
++          echo "At least 4GB of memory required. You have $$(numfmt --to iec $$((mem_available * one_meg)))"
++          echo
++          warning_resources="true"
++        fi
++        if (( cpus_available < 2 )); then
++          echo
++          echo -e "\033[1;33mWARNING!!!: Not enough CPUS available for Docker.\e[0m"
++          echo "At least 2 CPUs recommended. You have $${cpus_available}"
++          echo
++          warning_resources="true"
++        fi
++        if (( disk_available < one_meg * 10 )); then
++          echo
++          echo -e "\033[1;33mWARNING!!!: Not enough Disk space available for Docker.\e[0m"
++          echo "At least 10 GBs recommended. You have $$(numfmt --to iec $$((disk_available * 1024 )))"
++          echo
++          warning_resources="true"
++        fi
++        if [[ $${warning_resources} == "true" ]]; then
++          echo
++          echo -e "\033[1;33mWARNING!!!: You have not enough resources to run Airflow (see above)!\e[0m"
++          echo "Please follow the instructions to increase amount of resources available:"
++          echo "   https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#before-you-begin"
++          echo
++        fi
++        mkdir -p /sources/logs /sources/dags /sources/plugins
++        chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
++        exec /entrypoint airflow version
++    # yamllint enable rule:line-length
++    environment:
++      <<: *airflow-common-env
++      _AIRFLOW_DB_MIGRATE: 'true'
++      _AIRFLOW_WWW_USER_CREATE: 'true'
++      _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
++      _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
++      _PIP_ADDITIONAL_REQUIREMENTS: ''
++    user: "0:0"
++    volumes:
++      - ${AIRFLOW_PROJ_DIR:-.}:/sources
++
++  airflow-cli:
++    <<: *airflow-common
++    profiles:
++      - debug
++    environment:
++      <<: *airflow-common-env
++      CONNECTION_CHECK_MAX_COUNT: "0"
++    # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
++    command:
++      - bash
++      - -c
++      - airflow
++
++  # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
++  # or by explicitly targeted on the command line e.g. docker-compose up flower.
++  # See: https://docs.docker.com/compose/profiles/
++  flower:
++    <<: *airflow-common
++    command: celery flower
++    profiles:
++      - flower
++    ports:
++      - "5555:5555"
++    healthcheck:
++      test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
++      interval: 30s
++      timeout: 10s
++      retries: 5
++      start_period: 30s
++    restart: always
++    depends_on:
++      <<: *airflow-common-depends-on
++      airflow-init:
++        condition: service_completed_successfully
++
++volumes:
++  postgres-db-volume:
+
+commit 126967ca4f9c6ed5600381ff1bb5f0b647984d34
+Author: ejmogly <jnekay6507@gmail.com>
+Date:   Tue Sep 15 12:44:04 2026 +0900
+
+    Initial commit: Add .gitignore and README.md
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..181d5d4
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,6 @@
++logs/
++output/
++__pycache__/
++*.pyc
++data/
++*.pem
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..1c4a91d
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,3 @@
++# 데엔7기_김준_7주차 프로젝트
++- 작성자: 김준 (데엔 7기)
++- 레포지토리: https://github.com/ejmogly/de7-JuneKim-w7

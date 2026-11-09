@@ -48,3 +48,13 @@ checkpoints/
 .dbt/
 target/
 dbt_packages/
+.env
+.env.*
+!.env.example
+.runtime/
+*문제지_ocr/
+*문제지_pdf_스샷/
+**/ref_ocr
+side_project/cdc-lakehouse-study/
+과제/7주 차/데엔7기_김준_7주차/project/
+

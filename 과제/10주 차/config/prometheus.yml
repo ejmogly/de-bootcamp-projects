@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'kafka-jmx'
+    static_configs:
+      - targets:
+          - 'kafka-1:9101'
+          - 'kafka-2:9102'
+          - 'kafka-3:9103'

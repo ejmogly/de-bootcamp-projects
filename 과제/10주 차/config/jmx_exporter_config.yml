@@ -1,0 +1,32 @@
+lowercaseOutputName: true
+rules:
+  # Topic-level BrokerTopicMetrics (specifically required for sensor-readings cumulative message count)
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=(.+), topic=(.+)><>Count
+    name: kafka_server_brokertopicmetrics_$1_total
+    labels:
+      topic: "$2"
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=(.+), topic=(.+)><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_$1_rate
+    labels:
+      topic: "$2"
+
+  # Broker-level BrokerTopicMetrics
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=(.+)><>Count
+    name: kafka_server_brokertopicmetrics_$1_count
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=(.+)><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_$1_rate
+
+  # Server metrics (UnderReplicatedPartitions, IsrShrinksPerSec, etc.)
+  - pattern: kafka.server<type=(.+), name=(.+)><>Value
+    name: kafka_server_$1_$2
+  - pattern: kafka.server<type=(.+), name=(.+)><>Count
+    name: kafka_server_$1_$2_count
+  - pattern: kafka.server<type=(.+), name=(.+)><>OneMinuteRate
+    name: kafka_server_$1_$2_rate
+
+  # Controller metrics
+  - pattern: kafka.controller<type=(.+), name=(.+)><>Value
+    name: kafka_controller_$1_$2
+
+  # Fallback for remaining metrics (including RequestMetrics)
+  - pattern: '.*'

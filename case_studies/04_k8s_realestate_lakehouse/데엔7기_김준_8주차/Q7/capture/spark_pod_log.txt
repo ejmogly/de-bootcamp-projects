@@ -1,0 +1,24 @@
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/09/22 12:45:08 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[Stage 0:>                                                          (0 + 1) / 1]                                                                                [Stage 1:>                                                          (0 + 1) / 1]26/09/22 12:45:21 WARN GarbageCollectionMetrics: To enable non-built-in garbage collector(s) List(G1 Concurrent GC), users should configure it(them) to spark.eventLog.gcMetrics.youngGenerationGarbageCollectors or spark.eventLog.gcMetrics.oldGenerationGarbageCollectors
+Starting Spark on K8s Stock Aggregation Job...
+Bucket: realestate-junekim, Region: ap-northeast-2
+=== Q8 종목별 집계 결과 ===
++------+---------+--------+-------+------------+
+|ticker|avg_close|max_high|min_low|total_volume|
++------+---------+--------+-------+------------+
+|AAPL  |204.01   |288.62  |124.17 |42740740000 |
+|JNJ   |161.98   |215.19  |140.68 |6814007700  |
+|JPM   |209.7    |330.86  |123.11 |7299229900  |
+|TSLA  |268.25   |498.83  |101.81 |82661596500 |
+|XOM   |111.11   |126.34  |95.77  |12490305000 |
++------+---------+--------+-------+------------+
+
+=== Q8 S3 저장 완료: s3://realestate-junekim/stock/q8_output/part-00000.snappy.parquet ===
+=== Redshift 적재 시작 (Data API COPY) ===
+DDL 상태: FINISHED
+COPY 상태: FINISHED
+=== Redshift stock_daily_stats row count: 5 ===
+Spark on K8s Stock Aggregation Job Completed Successfully!
+                                                                                

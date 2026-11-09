@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  airflow-standalone:
+    image: apache/airflow:3.0.0
+    container_name: airflow-5th-week
+    env_file:
+      - ../.env
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__DEFAULT_TIMEZONE=Asia/Seoul
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+    command: standalone

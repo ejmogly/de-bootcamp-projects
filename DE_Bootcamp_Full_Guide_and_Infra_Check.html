@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>데이터 엔지니어링 여정 총정리 & AWS/Docker 인프라 점검 가이드</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --success: #059669;
+      --success-soft: #ecfdf5;
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      margin: 0;
+      padding: 32px 16px 64px;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 32px 36px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.15);
+      color: #93c5fd;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .hero h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 15px;
+    }
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px 30px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    }
+    .section h2 {
+      margin: 0 0 14px 0;
+      font-size: 20px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 10px;
+    }
+    .section h3 {
+      margin: 20px 0 8px 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .alert-danger {
+      background: var(--danger-soft);
+      border: 1px solid #fecaca;
+      border-left: 5px solid var(--danger);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+    }
+    .alert-danger strong {
+      color: #991b1b;
+      font-size: 15.5px;
+    }
+
+    .alert-success {
+      background: var(--success-soft);
+      border: 1px solid #a7f3d0;
+      border-left: 5px solid var(--success);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-top: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 16px;
+      font-size: 13.5px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .step-card {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 16px;
+      background: #fcfdff;
+    }
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .step-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .step-tag {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .key-point {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: 10px;
+      font-size: 13.5px;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    code {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12.5px;
+    }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 14px 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin: 8px 0 14px;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+    ul {
+      margin: 6px 0 10px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="badge">STEP-BY-STEP REMINDER &amp; INFRASTRUCTURE AUDIT</div>
+      <h1>🧭 데이터 엔지니어링 여정 총정리 &amp; 인프라 점검 가이드</h1>
+      <p>오랜만에 다시 보더라도 전체 맥락이 자연스럽게 그려지도록 정리한 부트캠프 1~10주차 · 4대 포트폴리오 · CDC 레이크하우스 스터디 리마인드 노트입니다.</p>
+    </div>
+
+    <!-- 1. AWS & DOCKER AUDIT -->
+    <div class="section">
+      <h2>🚨 1. [긴급 점검] AWS 과금 원인 분석 및 로컬 Docker 상태</h2>
+      <div class="alert-danger">
+        <strong>왜 AWS에서 과금 알림 이메일이 왔을까요? (실측 결과)</strong>
+        <p style="margin: 6px 0 0 0; font-size: 14px;">
+          서울 리전(<code>ap-northeast-2</code>)에 8주차·10주차 실습 때 생성한 유료 리소스들이 <strong>10월 중순부터 24시간 내내 켜져 있어</strong> 가입 시 받은 <strong>$100 무료 크레딧을 거의 다 소진(누적 $97.29 사용)</strong>했기 때문입니다.<br/>
+          • 10월 사용량: <strong>$70.83</strong> (크레딧 차감) &nbsp;|&nbsp; 11월 1~9일 사용량: <strong>$26.46</strong> (크레딧 차감)<br/>
+          • 지금 바로 정리하지 않으면 <strong>내일부터 하루 약 $3.00(월 약 12만 원)가 실제 카드로 결제</strong>됩니다.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">리소스 구분</th>
+            <th style="width: 26%;">이름 / ID</th>
+            <th style="width: 22%;">현재 상태 및 스펙</th>
+            <th style="width: 32%;">과금 이유 및 조치 방법</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. EC2 인스턴스</strong></td>
+            <td><code>de7-junekim-k3s</code><br/>(<code>i-019e082f17c353839</code>)</td>
+            <td><strong style="color:#dc2626;">Running (가동 중)</strong><br/><code>t3.large</code> (2 vCPU, 8GB)<br/>IP: <code>43.201.98.255</code></td>
+            <td>8주차 부동산 K3s 실습 서버입니다. 프리티어가 아닌 <code>t3.large</code>라 <strong>월 약 $67 + 공인 IP $3.6</strong>가 부과됩니다. <strong>즉시 중지(Stop) 또는 종료(Terminate)</strong>가 필요합니다.</td>
+          </tr>
+          <tr>
+            <td><strong>2. EBS 볼륨</strong></td>
+            <td><code>vol-0f9956b79986abb87</code></td>
+            <td><strong style="color:#dc2626;">In-use (50 GB gp3)</strong></td>
+            <td>프리티어 한도(30GB)를 초과한 50GB 디스크로 <strong>월 약 $4~5</strong>가 발생합니다. (위 EC2를 Terminate하면 함께 자동 삭제됩니다.)</td>
+          </tr>
+          <tr>
+            <td><strong>3. Redshift Serverless &amp; 탄력적 IP 2개</strong></td>
+            <td>• <code>de8-stock-wg</code> (8주차)<br/>• <code>de10week-wg</code> (10주차)<br/>• EIP: <code>15.165.168.183</code>, <code>52.78.34.150</code></td>
+            <td><strong style="color:#d97706;">AVAILABLE (8 RPU)</strong><br/>Publicly Accessible</td>
+            <td>작업 그룹 2개가 공인 탄력적 IP(EIP) 2개를 점유해 <strong>월 $7.2</strong>가 상시 발생하며, 쿼리 유입 시 RPU 요금이 부과됩니다. <strong>작업 그룹 및 네임스페이스 삭제</strong>를 권장합니다.</td>
+          </tr>
+          <tr>
+            <td><strong>4. S3 버킷 10개</strong></td>
+            <td><code>de-7-junekim</code>, <code>de7-junekim-week10</code>, <code>realestate-junekim</code> 등</td>
+            <td>유지 중 (소량 데이터)</td>
+            <td>현재 월 <strong>$0.01 미만</strong>으로 요금 영향은 미미합니다.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="alert-success">
+        <strong>✅ 로컬 Mac Docker 컨테이너 점검 결과: 안전 (모두 중지됨)</strong><br/>
+        현재 맥북에 있는 21개 컨테이너(<code>cdc-study-*</code> 9개, <code>q1_2_3_realestate-*</code> 7개, <code>k3d-*</code> 2개, <code>spark-*</code> 2개)는 모두 <code>Exited</code> 상태여서 로컬 리소스를 소모하고 있지 않습니다.
+      </div>
+    </div>
+
+    <!-- 2. STEP BY STEP GUIDE -->
+    <div class="section">
+      <h2>📖 2. 처음부터 지금까지: 스텝바이스텝 리마인드 가이드</h2>
+      <p>데이터 엔지니어링 부트캠프에서 다룬 방대한 내용들을 <strong>"데이터의 흐름"</strong> 순서대로 6단계로 쉽게 풀어서 정리했습니다.</p>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-title">Step 1. 데이터 창고(DW) 설계와 SQL 쿼리 최적화</div>
+          <span class="step-tag">1~2주 차 · ClassicModels DW</span>
+        </div>
+        <p><strong>무엇을 했나요?</strong> 글로벌 모형 차량 유통사(ClassicModels)의 8개 테이블(고객, 주문, 상세품목, 결제, 지사, 직원 등)을 연결하며 기초 조회부터 다차원 집계, 다중 조인까지 30개의 분석 쿼리를 완성했습니다.</p>
+        <div class="key-point">
+          💡 <strong>리마인드 핵심:</strong> 왜 <code>SELECT *</code>를 쓰지 않고 <code>WHERE</code>에서 먼저 필터링할까요? 나중에 배운 컬럼형 파일(Parquet)과 클라우드 쿼리 엔진(Athena)은 <strong>"읽어들인 데이터 용량"만큼 과금</strong>되기 때문에, 필요한 컬럼과 행만 최소한으로 읽는 습관이 모든 데이터 파이프라인 최적화의 출발점입니다.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-title">Step 2. 클라우드 데이터 레이크와 자동화 배관 공사</div>
+          <span class="step-tag">3~4주 차 · AWS S3/Glue/Athena &amp; Airflow 3.0</span>
+        </div>
+        <p><strong>무엇을 했나요?</strong> 내 컴퓨터에 데이터를 두는 대신 <strong>Amazon S3</strong>(데이터 레이크)에 파일을 올리고, <strong>AWS Glue</strong>로 스키마 카탈로그를 만든 뒤 <strong>Amazon Athena</strong>로 서버 없이 SQL 분석을 수행했습니다. 그리고 이 일련의 과정을 <strong>Apache Airflow 3.0</strong>(<code>@dag</code>, <code>@task</code> TaskFlow API, Dynamic Task Mapping)으로 자동화했습니다.</p>
+        <div class="key-point">
+          💡 <strong>리마인드 핵심:</strong> 파이프라인 자동화에서 가장 중요한 단어는 <strong>멱등성(Idempotency)</strong>입니다. 장애가 나서 어제 자 파이프라인을 세 번 다시 돌려도(Backfill), 데이터가 3배로 중복 적재되지 않고 언제나 똑같은 결과를 보장하도록 설계해야 합니다.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-title">Step 3. 대용량 분산 처리 엔진으로 데이터 요리하기</div>
+          <span class="step-tag">5주 차 · Apache Spark (PySpark)</span>
+        </div>
+        <p><strong>무엇을 했나요?</strong> 설비 IoT 센서 로그와 채용 공고 데이터를 <strong>PySpark</strong>로 분산 처리하고, 실행 계획(<code>explain()</code>)을 분석해 처리 속도를 높이는 최적화를 진행했습니다.</p>
+        <div class="key-point">
+          💡 <strong>리마인드 핵심:</strong> Spark에서 가장 비싼 작업은 여러 서버가 네트워크로 데이터를 섞는 <strong>셔플(Shuffle)</strong>입니다. 큰 로그 테이블과 작은 마스터 테이블을 조인할 때 작은 테이블을 모든 워커 노드에 복제해 주는 <strong>Broadcast Join</strong>을 쓰면 셔플 없이 빠르게 처리할 수 있습니다.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-title">Step 4. 컨테이너 인프라와 실전 End-to-End 데이터 파이프라인</div>
+          <span class="step-tag">6~8주 차 · Docker, Kubernetes &amp; 부동산/주식 파이프라인</span>
+        </div>
+        <p><strong>무엇을 했나요?</strong> Docker와 Kubernetes(K3s/k3d) 위에 Airflow와 Spark 클러스터를 띄우고, 외부 API(부동산 실거래가, 주식 데이터) 수집 ➔ S3 Raw 보존 ➔ Spark Parquet 정제 ➔ Redshift Serverless / PostgreSQL 마트 적재까지 이어지는 전 과정을 하나로 묶었습니다.</p>
+        <div class="key-point">
+          💡 <strong>리마인드 핵심:</strong> 데이터를 바로 DB에 넣지 않고 굳이 <strong>S3 Raw Zone(원본)</strong>과 <strong>Processed Zone(Parquet)</strong>을 거치는 이유는, 나중에 비즈니스 로직이 바뀌거나 버그가 발견되었을 때 언제든 원본 파일로부터 데이터를 다시 재생산(Replay)하기 위해서입니다.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-title">Step 5. 초 단위로 흐르는 실시간 이벤트 스트리밍</div>
+          <span class="step-tag">9~10주 차 · Apache Kafka, KRaft, Connect, ksqlDB</span>
+        </div>
+        <p><strong>무엇을 했나요?</strong> 전기차 충전소 상태 스트림과 실시간 가격 데이터를 다루기 위해 3대 브로커 기반의 <strong>Kafka 클러스터(KRaft 모드)</strong>를 구축하고, Schema Registry(Avro), Kafka Connect(S3/JDBC 연동), ksqlDB(5분 윈도우 실시간 이상 감지)까지 10개 실전 문제를 모두 해결했습니다.</p>
+        <div class="key-point">
+          💡 <strong>리마인드 핵심:</strong> Kafka는 <strong>같은 메시지 Key(예: 기기 ID, 주문 ID)를 가진 이벤트를 항상 같은 Partition에 순서대로 넣습니다.</strong> 덕분에 분산 환경에서도 특정 주문이나 센서의 상태 변화 순서가 뒤바뀌지 않게 보장할 수 있습니다.
+        </div>
+      </div>
+
+      <div class="step-card" style="border-left-color: #059669; background: #f0fdf4;">
+        <div class="step-header">
+          <div class="step-title">Step 6. [현재 진행 중] 실시간 CDC 레이크하우스 스터디</div>
+          <span class="step-tag" style="background:#d1fae5; color:#065f46;">사이드 프로젝트 1~3회차 완료 (4~8회차 예정)</span>
+        </div>
+        <p><strong>무엇을 하고 있나요?</strong> 서비스 DB(PostgreSQL)에서 데이터가 추가(<code>c</code>), 수정(<code>u</code>), 심지어 <strong>물리 삭제(<code>d</code>)</strong>될 때, DB의 트랜잭션 로그(WAL)를 <strong>Debezium</strong>으로 실시간 캡처해 <strong>Kafka ➔ Flink ➔ Apache Iceberg (Bronze)</strong>로 적재하는 파이프라인입니다.</p>
+        <ul>
+          <li><strong>1~2회차 완료:</strong> 9개 컨테이너 기동, 환불 20,000원 생성 ➔ 30,000원 수정 ➔ 삭제(환불 철회) 후 MinIO S3에 쌓인 실제 Parquet 파일 바이트와 Iceberg 메타데이터 트리 검증 완료.</li>
+          <li><strong>3회차 완료:</strong> 원천 INSERT부터 Bronze 조회까지 <strong>6.56초</strong> 지연 실측 완료. 나만의 개인 프로젝트인 <strong>"스마트 퀵커머스 실시간 주문·물류·정산 레이크하우스"</strong>(<code>ecommerce.orders</code>, <code>payments</code>, <code>deliveries</code>) 설계 및 원천 DB 테이블 생성 완료!</li>
+          <li><strong>다음 할 일 (4~8회차):</strong> Spark SQL로 Silver <code>MERGE INTO</code> 구현(4회차) ➔ dbt로 Gold 정산/SLA 마트 구축(5회차) ➔ 소급 정정(6회차) ➔ Iceberg 파일 컴팩션 튜닝(7회차) ➔ Airflow 연동(8회차).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. QUICK COMMANDS -->
+    <div class="section">
+      <h2>🛠️ 3. 바로 따라 하는 명령어 치트시트</h2>
+
+      <h3>① AWS 유료 리소스 즉시 중지/정리 명령어 (과금 차단)</h3>
+      <pre><code># 1. 현재 켜져 있는 t3.large EC2 인스턴스(de7-junekim-k3s) 즉시 중지(Stop) 또는 종료(Terminate)
+aws ec2 stop-instances --instance-ids i-019e082f17c353839 --region ap-northeast-2
+# (아예 삭제하려면: aws ec2 terminate-instances --instance-ids i-019e082f17c353839 --region ap-northeast-2)
+
+# 2. Redshift Serverless 작업 그룹 2개 삭제 (연결된 탄력적 IP 2개 과금 해제)
+aws redshift-serverless delete-workgroup --workgroup-name de8-stock-wg --region ap-northeast-2
+aws redshift-serverless delete-workgroup --workgroup-name de10week-wg --region ap-northeast-2</code></pre>
+
+      <h3>② CDC 레이크하우스 스터디 환경 다시 켜고 실습 이어가기</h3>
+      <pre><code># 1. 스터디 폴더로 이동
+cd /Users/ejay/Downloads/code/de_bootcamp/side_project/cdc-lakehouse-study
+
+# 2. 기존 데이터를 유지한 채로 9개 컨테이너 다시 시작하기
+./scripts/self-study.sh --environment start
+
+# 3. 컨테이너 상태 및 파이프라인 정상 동작 확인
+./scripts/lab.sh ps
+./scripts/verify.sh
+
+# 4. 내가 설계한 스마트 퀵커머스(ecommerce) 원천 테이블 확인
+docker exec -it cdc-study-source-db-1 psql -U source -d app -c "\dt ecommerce.*"
+
+# 5. 실습 후 안전하게 컨테이너 중지하기
+./scripts/stop.sh</code></pre>
+    </div>
+  </div>
+</body>
+</html>

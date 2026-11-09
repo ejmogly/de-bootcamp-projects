@@ -1,0 +1,25 @@
+# ==============================================================================
+# 과제 04 values.yaml
+# - dags.gitSync 6개 필수 키: enabled, repo, branch, subPath, depth, wait
+# - postgresql 필수 키: enabled: true, primary.persistence.enabled: false
+# ==============================================================================
+dags:
+  gitSync:
+    enabled: true
+    repo: https://github.com/ejmogly/de7-JuneKim-w8-dags
+    branch: main
+    subPath: "dags"
+    depth: 1
+    wait: 30
+
+postgresql:
+  enabled: true
+  image:
+    tag: "latest"
+  primary:
+    persistence:
+      enabled: false
+
+webserver:
+  service:
+    type: ClusterIP

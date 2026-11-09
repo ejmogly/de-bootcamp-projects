@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: q8-spark-stock
+  namespace: default
+spec:
+  template:
+    metadata:
+      labels:
+        app: q8-spark-stock
+    spec:
+      containers:
+      - name: spark-job
+        image: q8-spark-stock:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: S3_BUCKET_NAME
+          value: "realestate-junekim"
+        - name: AWS_DEFAULT_REGION
+          value: "ap-northeast-2"
+        - name: REDSHIFT_WORKGROUP
+          value: "de8-stock-wg"
+        - name: REDSHIFT_DB
+          value: "dev"
+        - name: REDSHIFT_ROLE_ARN
+          value: "arn:aws:iam::268790346668:role/de8-redshift-role"
+      restartPolicy: Never
+  backoffLimit: 2

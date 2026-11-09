@@ -1,0 +1,18 @@
+{
+  "name": "equipment-master-source",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "tasks.max": "1",
+    "connection.url": "jdbc:mysql://mysql:3306/manufacturing?useSSL=false&allowPublicKeyRetrieval=true",
+    "connection.user": "de_user",
+    "connection.password": "de_password",
+    "table.whitelist": "equipment_master",
+    "mode": "bulk",
+    "topic.prefix": "equipment-",
+    "poll.interval.ms": "5000",
+    "transforms": "reroute",
+    "transforms.reroute.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.reroute.regex": "equipment-equipment_master",
+    "transforms.reroute.replacement": "equipment-master"
+  }
+}

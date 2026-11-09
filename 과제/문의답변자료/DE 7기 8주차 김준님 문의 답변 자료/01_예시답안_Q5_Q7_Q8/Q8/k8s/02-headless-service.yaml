@@ -1,0 +1,20 @@
+# 과제 08 (1) — Headless Service
+#
+#  clusterIP: None 이면 서비스에 가상 IP 를 주지 않는다.
+#  대신 파드마다 <파드이름>.<서비스이름> DNS 가 만들어져 각 파드를 직접 지목할 수 있다.
+#  일반 Service 라면 로드밸런싱 때문에 어느 파드가 응답할지 알 수 없다.
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-svc
+  namespace: stock-honggildong
+  labels:
+    app: stock
+spec:
+  clusterIP: None               # ← headless
+  selector:
+    app: stock
+  ports:
+    - name: web                 # StatefulSet 의 containerPort 이름과 같아야 한다
+      port: 80
+      targetPort: web

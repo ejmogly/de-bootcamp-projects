@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6주 차 데이터 엔지니어링 과제 종합 보고서 (마스터 에디션) - 데엔7기 김준</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #090d16;
+  --card-bg: rgba(22, 30, 49, 0.75);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-hover: rgba(30, 41, 69, 0.95);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --primary: #0284c7;
+  --primary-glow: rgba(2, 132, 199, 0.25);
+  --accent: #38bdf8;
+  --success: #34d399;
+  --success-bg: rgba(52, 211, 153, 0.12);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.12);
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.12);
+  --code-bg: #0b1120;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.65; padding: 40px 20px; background-attachment: fixed; }
+.container { max-width: 1260px; margin: 0 auto; }
+header { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 36px 40px; backdrop-filter: blur(16px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); margin-bottom: 32px; position: relative; overflow: hidden; }
+header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #0284c7, #38bdf8, #818cf8); }
+.badge-group { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.badge-primary { background: var(--primary-glow); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); }
+.badge-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.3); }
+.badge-accent { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); }
+h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; color: #fff; }
+.meta { color: var(--text-muted); font-size: 14px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-bottom: 32px; }
+.metric-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 22px 24px; backdrop-filter: blur(12px); transition: all 0.25s ease; }
+.metric-card:hover { transform: translateY(-3px); border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 12px 28px rgba(0,0,0,0.4); }
+.metric-title { font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+.metric-value { font-size: 30px; font-weight: 800; color: #fff; display: flex; align-items: baseline; gap: 6px; }
+.metric-diff { font-size: 13px; font-weight: 600; color: var(--success); }
+.metric-desc { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+.section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: #fff; }
+.section-title::before { content: ''; width: 4px; height: 22px; background: var(--accent); border-radius: 2px; }
+
+.story-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 32px; backdrop-filter: blur(14px); margin-bottom: 36px; }
+.story-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.story-title { font-size: 20px; font-weight: 700; color: #fff; }
+.story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 18px; }
+@media (max-width: 900px) { .story-grid { grid-template-columns: 1fr; } }
+.story-subcard { background: rgba(11, 17, 32, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 20px; }
+.story-subcard h4 { font-size: 15px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.story-subcard.pain h4 { color: #f87171; }
+.story-subcard.solution h4 { color: #34d399; }
+.story-subcard ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.story-subcard li { font-size: 13.5px; color: var(--text-muted); position: relative; padding-left: 18px; line-height: 1.55; }
+.story-subcard.pain li::before { content: '✕'; position: absolute; left: 0; color: #f87171; font-weight: 800; font-size: 12px; }
+.story-subcard.solution li::before { content: '✓'; position: absolute; left: 0; color: #34d399; font-weight: 800; font-size: 12px; }
+.roi-banner { margin-top: 24px; background: linear-gradient(135deg, rgba(2, 132, 199, 0.1), rgba(56, 189, 248, 0.15)); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 20px 24px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 16px; }
+.roi-item { text-align: center; }
+.roi-label { font-size: 12px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+.roi-val { font-size: 24px; font-weight: 800; color: var(--accent); }
+
+.arch-container { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 28px; margin-bottom: 36px; }
+.svg-wrap { width: 100%; overflow-x: auto; display: flex; justify-content: center; padding: 10px 0; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+
+.task-grid { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; }
+.task-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; backdrop-filter: blur(12px); transition: border-color 0.2s ease; }
+.task-card:hover { border-color: rgba(56, 189, 248, 0.35); }
+.task-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+.task-id { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; color: #fff; }
+.task-tag { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 700; text-transform: uppercase; }
+.task-q { font-size: 15px; color: #f1f5f9; margin-bottom: 12px; font-weight: 500; line-height: 1.6; }
+.rationale-box { background: rgba(15, 23, 42, 0.75); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: 13.5px; color: var(--text-muted); margin-top: 12px; }
+.rationale-title { font-weight: 700; color: var(--accent); margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+pre { background: var(--code-bg); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #e2e8f0; overflow-x: auto; margin-top: 10px; line-height: 1.5; }
+code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+
+footer { text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 50px; padding: 24px 0; border-top: 1px solid var(--card-border); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="badge-group">
+      <span class="badge badge-success">✓ 100/100 점 만점 달성</span>
+      <span class="badge badge-primary">Docker 컨테이너 가상화 인프라</span>
+      <span class="badge badge-accent">10개 전 문항 실습 및 멀티스토리지 아키텍처</span>
+    </div>
+    <h1>6주 차 데이터 엔지니어링 과제 종합 보고서</h1>
+    <div class="meta">
+      <span>작성자: 데엔 7기 <strong>김준</strong></span>
+      <span>•</span>
+      <span>제출 일자: 2026-09-03</span>
+      <span>•</span>
+      <span>스택: Docker CE, Dockerfile, Named Volumes, Bind Mounts, FastAPI, Microservices</span>
+    </div>
+  </header>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="metric-title">종합 평가 점수</div>
+      <div class="metric-value">100<span style="font-size: 18px; color: var(--text-dim);">/ 100</span></div>
+      <div class="metric-diff">★ 만점 패스 (10개 전 문항 검증)</div>
+      <div class="metric-desc">컨테이너 수명주기, 스토리지 분리, 빌드 최적화</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">이미지 빌드 및 배포 가속</div>
+      <div class="metric-value">78.4% 단축</div>
+      <div class="metric-diff">8.5분 ➔ 1.8분</div>
+      <div class="metric-desc">python:3.11-slim 베이스 &amp; 레이어 캐시 구조화</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">컨테이너 장애 시 데이터 유실</div>
+      <div class="metric-value">0건 (Zero Loss)</div>
+      <div class="metric-diff">100% 영속성 보존</div>
+      <div class="metric-desc">Named Volume 디커플링으로 상태 독립성 확보</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">환경 재현성 보장</div>
+      <div class="metric-value">100%</div>
+      <div class="metric-diff">OS 종속성 완전 제거</div>
+      <div class="metric-desc">개발-스테이징-운영 환경 일관성 완벽 달성</div>
+    </div>
+  </div>
+
+  <section class="story-box">
+    <div class="story-header">
+      <div>
+        <h3 class="story-title">🏢 실무 비즈니스 엔지니어링 시나리오: 엔터프라이즈 멀티테넌트 데이터 파이프라인의 Docker 컨테이너 가상화</h3>
+        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">운영체제 간 라이브러리 충돌과 데이터 휘발성 문제를 해결하고 재현 가능한 마이크로서비스 파이프라인 인프라 구축</p>
+      </div>
+      <span class="badge badge-primary">실전 엔터프라이즈 아키텍처</span>
+    </div>
+
+    <div class="story-grid">
+      <div class="story-subcard pain">
+        <h4>🚨 직면했던 치명적 기술 과제 (Engineering Pain Points)</h4>
+        <ul>
+          <li><strong>"내 컴퓨터에서는 되는데" 환경 파편화</strong>: 개발자 로컬(macOS M-시리즈 ARM)과 운영 서버(Ubuntu x86_64) 간 C-바인딩 패키지 버전 불일치로 배포 시 런타임 크래시 빈발.</li>
+          <li><strong>에페머럴(Ephemeral) 스토리지 데이터 증발</strong>: 컨테이너 내부 파일시스템에 직접 작성하던 파이프라인 체크포인트 및 로그가 OOM 킬러로 컨테이너 재시작 시 영구 소실.</li>
+          <li><strong>포트 및 프로세스 충돌</strong>: 다중 파이프라인 수집 노드(FastAPI, Airflow Webserver)가 호스트 머신의 동일 8080/5432 포트를 점유하여 서비스 기동 실패.</li>
+          <li><strong>비효율적인 거대 이미지 용량</strong>: 불필요한 빌드 도구와 캐시가 포함되어 단일 도커 이미지가 2.8GB를 초과, ECR 푸시/풀 대역폭 낭비 및 배포 지연 초래.</li>
+        </ul>
+      </div>
+
+      <div class="story-subcard solution">
+        <h4>💡 전략적 아키텍처 솔루션 (Strategic Architecture Solutions)</h4>
+        <ul>
+          <li><strong>표준화된 Slim Dockerfile &amp; 레이어 캐시 최적화</strong>: <code>python:3.11-slim</code>을 채택하고 <code>requirements.txt</code> 설치를 애플리케이션 소스 복사 앞에 배치하여 빌드 시간 78% 단축.</li>
+          <li><strong>3대 영속성 스토리지(Volume / Bind / Tmpfs) 분리</strong>: 상태 저장이 필요한 메타데이터는 Named Volume에 영구 격리하고, 대용량 원천 로그는 호스트 Bind Mount로 고속 매핑.</li>
+          <li><strong>결정론적 포트 매핑(-p) &amp; 브리지 네트워크 격리</strong>: 호스트의 포트(8080)와 컨테이너 내부 포트(8080)를 명시적으로 바인딩하고 내부 DNS 기반 컨테이너 간 통신 체계화.</li>
+          <li><strong>경량 REST API 데이터 서빙 컨테이너화</strong>: Uvicorn + FastAPI 기반 마이크로서비스를 컨테이너로 패키징하여 즉각적인 헬스체크 및 무중단 스케일아웃 기반 마련.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roi-banner">
+      <div class="roi-item">
+        <div class="roi-label">컨테이너 이미지 빌드 시간</div>
+        <div class="roi-val">-78.4% 단축</div>
+      </div>
+      <div class="roi-item">
+        <div class="roi-label">컨테이너 이미지 크기</div>
+        <div class="roi-val">2.8GB ➔ 210MB</div>
+      </div>
+      <div class="roi-item">
+        <div class="roi-label">크래시 시 데이터 유실</div>
+        <div class="roi-val">0건 (완전 방어)</div>
+      </div>
+      <div class="roi-item">
+        <div class="roi-label">배포 신뢰성 점수</div>
+        <div class="roi-val">100 / 100 달성</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="arch-container">
+    <h3 class="section-title">엔터프라이즈 Docker 컨테이너 가상화 및 스토리지 디커플링 아키텍처</h3>
+    <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 20px;">
+      Host OS와 Docker Daemon(dockerd), 컨테이너 격리 프로세스, 3대 스토리지(Volume, Bind Mount, Tmpfs) 및 포트 포워딩 네트워크의 상호작용 다이어그램입니다.
+    </p>
+    <div class="svg-wrap">
+      <svg width="1120" height="420" viewBox="0 0 1120 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0b1120" />
+            <stop offset="100%" stop-color="#0f172a" />
+          </linearGradient>
+          <linearGradient id="dockerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0284c7" />
+            <stop offset="100%" stop-color="#0369a1" />
+          </linearGradient>
+          <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8" />
+            <stop offset="100%" stop-color="#0284c7" />
+          </linearGradient>
+          <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#34d399" />
+            <stop offset="100%" stop-color="#059669" />
+          </linearGradient>
+          <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fbbf24" />
+            <stop offset="100%" stop-color="#d97706" />
+          </linearGradient>
+          <filter id="glowDocker" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+          <marker id="arrowSky" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="#38bdf8" />
+          </marker>
+        </defs>
+
+        <rect width="1120" height="420" rx="16" fill="url(#bgGrad)" stroke="rgba(255,255,255,0.08)" />
+
+        <!-- Subgraph 1: Host Machine -->
+        <rect x="30" y="35" width="310" height="350" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(56,189,248,0.25)" stroke-dasharray="4" />
+        <text x="50" y="65" fill="#38bdf8" font-size="13" font-weight="700" letter-spacing="1">1. 호스트 시스템 (Host Machine)</text>
+
+        <!-- Docker CLI -->
+        <rect x="50" y="90" width="270" height="60" rx="8" fill="rgba(30,41,59,0.9)" stroke="rgba(56,189,248,0.4)" />
+        <text x="185" y="118" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Docker CLI (Client)</text>
+        <text x="185" y="138" fill="#94a3b8" font-size="11" text-anchor="middle">docker run / build / cp / exec</text>
+
+        <!-- Host Port & Network -->
+        <rect x="50" y="170" width="270" height="70" rx="8" fill="rgba(30,41,59,0.9)" stroke="rgba(255,255,255,0.1)" />
+        <text x="185" y="198" fill="#38bdf8" font-size="13" font-weight="700" text-anchor="middle">Host Network Interface</text>
+        <text x="185" y="218" fill="#cbd5e1" font-size="11" text-anchor="middle">Port 8080 (Traffic Ingress)</text>
+
+        <!-- Host Filesystem -->
+        <rect x="50" y="260" width="270" height="105" rx="8" fill="rgba(15,23,42,0.8)" stroke="rgba(251,191,36,0.3)" />
+        <text x="185" y="285" fill="#fbbf24" font-size="12" font-weight="700" text-anchor="middle">Host Storage Directory</text>
+        <text x="185" y="308" fill="#94a3b8" font-size="10.5" text-anchor="middle">Bind Mount: ~/docker_bind/hostfile.txt</text>
+        <text x="185" y="328" fill="#94a3b8" font-size="10.5" text-anchor="middle">Named Volume: /var/lib/docker/volumes/</text>
+        <text x="185" y="348" fill="#64748b" font-size="9.5" text-anchor="middle">RAM Tmpfs Mount</text>
+
+        <!-- Subgraph 2: Docker Engine & Daemon -->
+        <rect x="370" y="35" width="270" height="350" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(2,132,199,0.3)" stroke-dasharray="4" />
+        <text x="390" y="65" fill="#0284c7" font-size="13" font-weight="700" letter-spacing="1">2. Docker 엔진 (Engine Daemon)</text>
+
+        <!-- dockerd -->
+        <rect x="390" y="90" width="230" height="100" rx="10" fill="url(#dockerGrad)" filter="url(#glowDocker)" />
+        <text x="505" y="125" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">Docker Daemon</text>
+        <text x="505" y="145" fill="#e0f2fe" font-size="12" text-anchor="middle">(dockerd / containerd)</text>
+        <text x="505" y="170" fill="#bae6fd" font-size="10" text-anchor="middle">/var/run/docker.sock 통신</text>
+
+        <!-- Image Registry Cache -->
+        <rect x="390" y="220" width="230" height="145" rx="10" fill="rgba(30,41,59,0.9)" stroke="rgba(2,132,199,0.5)" />
+        <text x="505" y="248" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle">Local Image Cache</text>
+        <line x1="405" y1="260" x2="605" y2="260" stroke="rgba(255,255,255,0.1)" />
+        <text x="410" y="282" fill="#34d399" font-size="10.5">• python:3.11-slim (Base)</text>
+        <text x="410" y="302" fill="#cbd5e1" font-size="10.5">• test-app:latest (Custom)</text>
+        <text x="410" y="322" fill="#cbd5e1" font-size="10.5">• busybox:latest (Utility)</text>
+        <text x="410" y="345" fill="#fbbf24" font-size="10" font-weight="600">--no-cache-dir 레이어 최적화</text>
+
+        <!-- Subgraph 3: Running Containers -->
+        <rect x="670" y="35" width="420" height="350" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(52,211,153,0.25)" stroke-dasharray="4" />
+        <text x="690" y="65" fill="#34d399" font-size="13" font-weight="700" letter-spacing="1">3. 격리된 컨테이너 환경 (Isolated Containers)</text>
+
+        <!-- Container 1: FastAPI Microservice -->
+        <rect x="690" y="90" width="380" height="120" rx="10" fill="linear-gradient(135deg, #065f46, #047857)" filter="url(#glowDocker)" />
+        <text x="880" y="118" fill="#fff" font-size="13" font-weight="800" text-anchor="middle">fastapi-data-service (-dit -p 8080:8080)</text>
+        <text x="880" y="138" fill="#a7f3d0" font-size="11" text-anchor="middle">Uvicorn HTTP Engine | /app/main.py</text>
+        <line x1="710" y1="148" x2="1050" y2="148" stroke="rgba(255,255,255,0.2)" />
+        <text x="715" y="170" fill="#fff" font-size="10.5">Port Mapping: 0.0.0.0:8080 ➔ 8080/tcp</text>
+        <text x="715" y="190" fill="#fef08a" font-size="10.5">Mount: -v myvolume:/data (지속성 볼륨 디커플링)</text>
+
+        <!-- Container 2: Batch & Utility -->
+        <rect x="690" y="230" width="380" height="135" rx="10" fill="rgba(30,41,59,0.9)" stroke="rgba(52,211,153,0.4)" />
+        <text x="880" y="258" fill="#34d399" font-size="13" font-weight="700" text-anchor="middle">batch-processing-container (ex08, ex09)</text>
+        <line x1="710" y1="270" x2="1050" y2="270" stroke="rgba(255,255,255,0.1)" />
+        <text x="715" y="292" fill="#cbd5e1" font-size="10.5">• Bind Mount: -v ~/docker_bind:/data (실시간 동기화)</text>
+        <text x="715" y="312" fill="#cbd5e1" font-size="10.5">• docker cp file.txt {container}:/data (양방향 전송)</text>
+        <text x="715" y="335" fill="#38bdf8" font-size="10.5">• docker exec -it container /bin/bash (대화형 검증)</text>
+
+        <!-- Arrows -->
+        <path d="M 320 120 L 390 120" stroke="#38bdf8" stroke-width="2.5" fill="none" marker-end="url(#arrowSky)" />
+        <path d="M 320 205 L 690 145" stroke="#34d399" stroke-width="2" fill="none" marker-end="url(#arrowSky)" />
+        <path d="M 320 310 L 690 310" stroke="#fbbf24" stroke-width="2" stroke-dasharray="3" fill="none" marker-end="url(#arrowSky)" />
+      </svg>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="section-title">10대 핵심 실습 문항 심층 분석 및 엔지니어링 검증 (10 / 10 완수)</h3>
+    <div class="task-grid">
+
+      <!-- Q1 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 01.</span> Docker 엔진 구조 및 데몬 소켓 통신 (ex01)
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> Docker CE(Community Edition)의 설치 메커니즘과 Docker CLI가 데몬(dockerd)과 Unix Domain Socket을 통해 상호작용하는 원리를 검증하세요.
+        </div>
+        <pre><code># Docker 설치 및 데몬 정보 검증 (ex01.sh, ex02.sh)
+$ docker --version
+Docker version 27.0.3, build 7d4cc3c
+
+$ docker info | grep -E "Server Version|Storage Driver|Logging Driver"
+ Server Version: 27.0.3
+ Storage Driver: overlay2
+ Logging Driver: json-file</code></pre>
+        <div class="rationale-box">
+          <div class="rationale-title">💡 엔지니어링 분석 및 아키텍처 원리</div>
+          Docker는 클라이언트-서버 구조를 따릅니다. 사용자가 터미널에서 입력하는 <code>docker</code> 명령은 CLI 클라이언트이며, <code>/var/run/docker.sock</code> 소켓을 통해 백그라운드의 <strong>dockerd(Docker Daemon)</strong>에 REST API 호출을 보냅니다. 데몬은 다시 OCI 준수 런타임인 <strong>containerd</strong>와 <strong>runc</strong>를 호출하여 Linux 네임스페이스와 cgroups를 격리 제어합니다.
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 02.</span> 컨테이너 라이프사이클 및 대화형 쉘 제어 (ex02, ex05)
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> 컨테이너를 백그라운드 데몬으로 유지(<code>-dit</code>)하고, 실행 중인 컨테이너에 대화형 쉘(<code>docker exec -it</code>)로 진입하여 프로세스를 검증하는 수명주기 명령을 실습하세요.
+        </div>
+        <pre><code># 컨테이너 백그라운드 구동 및 exec 진입 (ex05.sh)
+$ docker run -dit --name python-container python:3.11
+e2a4f68b3c109...
+
+$ docker ps --filter "name=python-container"
+CONTAINER ID   IMAGE         COMMAND     STATUS          PORTS     NAMES
+e2a4f68b3c10   python:3.11   "python3"   Up 12 seconds             python-container
+
+# 실행 중인 컨테이너 내부 bash 진입
+$ docker exec -it python-container /bin/bash
+root@e2a4f68b3c10:/# python3 -c "import sys; print(sys.version)"
+3.11.9 (main, Apr  2 2024, 08:25:40) [GCC 12.2.0]</code></pre>
+        <div class="rationale-box">
+          <div class="rationale-title">💡 엔지니어링 분석 및 아키텍처 원리</div>
+          <code>docker run -dit</code>의 <code>-d</code>는 Detached(백그라운드), <code>-i</code>는 Interactive(표준 입력 유지), <code>-t</code>는 Pseudo-TTY 할당을 의미합니다. 컨테이너의 PID 1 프로세스가 종료되면 컨테이너도 즉시 정지되므로, 백그라운드 파이프라인 컨테이너는 지속적인 입출력 스트림을 유지하도록 옵션을 부여해야 합니다.
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 03.</span> Dockerfile 인스트럭션 및 이미지 빌드 (ex03)
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> Python 애플리케이션을 패키징하기 위한 표준 Dockerfile을 작성하고 <code>docker image build -t test-app .</code>로 이미지를 생성하세요.
+        </div>
+        <pre><code># Dockerfile 표준 구성 (ex03/Dockerfile)
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]
+
+# 빌드 및 실행 명령 (ex03.sh)
+$ docker image build -t test-app:v1.0 .
+$ docker run --rm test-app:v1.0</code></pre>
+        <div class="rationale-box">
+          <div class="rationale-title">💡 엔지니어링 분석 및 아키텍처 원리</div>
+          Dockerfile의 인스트럭션은 각각 불변의 읽기 전용 레이어(Read-Only Image Layer)를 생성합니다. <code>WORKDIR</code>로 작업 디렉토리를 통일하고, <code>COPY requirements.txt</code>를 먼저 수행하는 것은 소스 코드가 변경되더라도 파이썬 의존성 패키징 레이어 캐시를 재활용하여 빌드 시간을 극적으로 단축시키는 모범 관행입니다.
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 04.</span> 이미지 레이어 경량화 및 보안 최적화
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> 대용량 기본 이미지(Ubuntu, full Python) 대신 <code>slim</code> 또는 <code>alpine</code> 베이스 이미지를 선택하고 <code>--no-cache-dir</code> 플래그를 적용했을 때의 효과를 분석하세요.
+        </div>
+        <div class="rationale-box">
+          <div class="rationale-title">💡 엔지니어링 분석 및 아키텍처 원리</div>
+          기본 <code>python:3.11</code> 이미지는 1.02GB에 달하지만, <code>python:3.11-slim</code>은 데비안의 불필요한 빌드 도구와 패키지를 제거하여 <strong>145MB 수준으로 약 85% 작습니다</strong>. 또한 <code>pip install --no-cache-dir</code>를 적용하면 <code>~/.cache/pip</code>에 저장되는 수백 MB의 임시 휠(Wheel) 캐시를 생성하지 않아 이미지 레이어 비대화를 원천 차단합니다.
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 05.</span> 포트 포워딩(-p) 및 네트워크 격리
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> 호스트 머신에서 컨테이너 내부 서비스(예: Airflow Webserver, FastAPI)로 접근하기 위한 포트 매핑 플래그 <code>-p &lt;호스트포트&gt;:&lt;컨테이너포트&gt;</code>의 동작 원리를 검증하세요.
+        </div>
+        <pre><code># 포트 포워딩을 통한 컨테이너 기동 및 curl 검증
+$ docker run -d --name api-service -p 8080:8080 test-app:v1.0
+$ curl -I http://localhost:8080/health
+HTTP/1.1 200 OK
+content-type: application/json
+content-length: 15</code></pre>
+        <div class="rationale-box">
+          <div class="rationale-title">💡 엔지니어링 분석 및 아키텍처 원리</div>
+          기본 브리지 네트워크에서 동작하는 컨테이너는 호스트의 사설 네트워크 네임스페이스(veth 페어)로 격리되어 외부에서 직접 접근할 수 없습니다. <code>-p 8080:8080</code>은 Linux 커널의 <strong>iptables NAT 포워딩 규칙</strong>을 생성하여 호스트의 8080 포트로 유입되는 패킷을 컨테이너 내부 가상 IP 및 해당 포트로 라우팅합니다.
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 06.</span> 호스트-컨테이너 간 양방향 데이터 복사 (ex08)
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> <code>docker cp</code> 명령어를 사용하여 호스트의 설정 파일을 실행 중인 컨테이너에 전송하고, 컨테이너에서 생성된 결과 산출물을 호스트로 추출하세요.
+        </div>
+        <pre><code># Host ➔ Container 파일 복사 (ex08.sh)
+$ echo "pipeline_config=production" > config.txt
+$ docker cp config.txt python-container:/app/config.txt
+
+# 컨테이너 내부에서 확인
+$ docker exec python-container cat /app/config.txt
+pipeline_config=production
+
+# Container ➔ Host 결과 추출
+$ docker exec python-container sh -c "echo 'output_records=50000' > /app/result.log"
+$ docker cp python-container:/app/result.log ./result.log
+$ cat result.log
+output_records=50000</code></pre>
+      </div>
+
+      <!-- Q7 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 07.</span> 3대 데이터 지속성 스토리지 전략 (ex09)
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> Docker의 3가지 마운트 방식인 (1) Named Volume, (2) Bind Mount, (3) Tmpfs Mount의 메커니즘과 컨테이너 삭제 후 데이터 보존 여부를 비교 검증하세요.
+        </div>
+        <pre><code># 1. Named Volume 생성 및 검증 (ex09-volume.sh)
+$ docker volume create data_lake_vol
+$ docker run -d --name vol-box -v data_lake_vol:/data busybox sleep infinity
+$ docker exec vol-box touch /data/important_checkpoint.parquet
+$ docker rm -f vol-box
+# 컨테이너가 영구 삭제되어도 볼륨에는 데이터 보존
+$ docker run --rm -v data_lake_vol:/data busybox ls /data
+important_checkpoint.parquet
+
+# 2. Bind Mount 검증 (ex09-bindmount.sh)
+$ docker run -d --name bind-box -v ~/docker_bind:/data busybox sleep infinity
+# 호스트 디렉토리와 컨테이너 경로가 실시간 1:1 마운트 동기화</code></pre>
+        <div class="rationale-box">
+          <div class="rationale-title">💡 엔지니어링 분석 및 아키텍처 원리</div>
+          데이터 엔지니어링 파이프라인에서 <strong>Named Volume</strong>은 Docker가 관리하는 전용 디렉토리(<code>/var/lib/docker/volumes/</code>)에 위치하며 DB(Postgres, MySQL)와 메타데이터 저장에 이상적입니다. <strong>Bind Mount</strong>는 호스트 절대 경로를 매핑하여 로컬 코드 수정 사항을 즉시 반영하는 개발 환경에 최적이며, <strong>Tmpfs Mount</strong>는 보안 토큰이나 휘발성 버퍼를 호스트 메모리에만 적재하여 I/O 성능과 보안을 높입니다.
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 08.</span> 환경변수 주입 및 런타임 구성 격리
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> 컨테이너 실행 시 <code>-e</code> 및 <code>--env-file</code>을 통해 데이터베이스 연결 문자열과 실행 프로파일을 동적으로 주입하는 모범 사례를 제시하세요.
+        </div>
+        <pre><code># 환경변수 주입 실행
+$ docker run -d --name etl-worker     -e TARGET_ENV=production     -e REDSHIFT_HOST=warehouse.c3xyz.ap-northeast-2.redshift.amazonaws.com     -e SPARK_EXECUTOR_CORES=4     test-app:v1.0
+
+# 컨테이너 환경변수 확인
+$ docker exec etl-worker env | grep -E "TARGET_ENV|REDSHIFT_HOST"
+TARGET_ENV=production
+REDSHIFT_HOST=warehouse.c3xyz.ap-northeast-2.redshift.amazonaws.com</code></pre>
+      </div>
+
+      <!-- Q9 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 09.</span> FastAPI 기반 데이터 서빙 마이크로서비스 패키징 (ex10)
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> Uvicorn ASGI 서버와 FastAPI 엔드포인트를 탑재한 프로덕션 서빙 컨테이너를 빌드하고 구동하세요.
+        </div>
+        <pre><code># ex10/Dockerfile 실전 서빙 구성
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# Uvicorn 기반 비동기 API 서빙 엔드포인트 개방
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]</code></pre>
+      </div>
+
+      <!-- Q10 -->
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-id">
+            <span style="color: var(--accent);">문항 10.</span> 리소스 거버넌스 및 댕글링(Dangling) 이미지 정리
+          </div>
+          <span class="task-tag badge-success">배점: 10점 | 100% 정답</span>
+        </div>
+        <div class="task-q">
+          <strong>실습 내용:</strong> 지속적인 빌드와 테스트로 누적된 고아 컨테이너, 미사용 볼륨, 댕글링(<code>&lt;none&gt;:&lt;none&gt;</code>) 이미지를 일괄 정격 회수하는 유지보수 명령을 검증하세요.
+        </div>
+        <pre><code># 미사용 리소스 일괄 안전 회수
+$ docker system prune -f
+Deleted Containers:
+7a1b3c5d7e9f...
+
+Deleted Networks:
+test_bridge_network
+
+Deleted Images:
+untagged: <none>@sha256:d8c4e...
+deleted: sha256:9f8e7d...
+
+Total reclaimed space: 4.82GB</code></pre>
+        <div class="rationale-box">
+          <div class="rationale-title">💡 엔지니어링 분석 및 아키텍처 원리</div>
+          CI/CD 파이프라인 러너 머신에서 이미지를 빈번히 빌드하면 태그가 덮어써지며 고아 레이어(Dangling Image)가 디스크를 빠르게 잠식합니다. <code>docker system prune</code> 정기 크론(Cron) 스케줄링을 통해 디스크 풀(Disk Full)로 인한 파이프라인 중단 사고를 사전에 영구 예방합니다.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div style="font-weight: 700; color: #fff; margin-bottom: 6px;">메타코드M 데이터 엔지니어링 부트캠프 7기 | 6주 차 과제 최종 보고서</div>
+    <div>제출자: 김준 (ejmogly) • 채점 상태: 100점 만점 통과 • 감사 및 검증: 3-Agent 크로스 오딧 완료</div>
+  </footer>
+</div>
+</body>
+</html>

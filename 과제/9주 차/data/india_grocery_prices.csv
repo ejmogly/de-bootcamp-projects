@@ -1,0 +1,201 @@
+item_name,market,year,month,price,currency,unit
+Milk (pasteurized),Ahmedabad,2016,11,46.0,INR,L
+Milk (pasteurized),Ahmedabad,2016,12,46.0,INR,L
+Milk (pasteurized),Bhopal,2016,11,40.0,INR,L
+Milk (pasteurized),Bhopal,2016,12,40.0,INR,L
+Milk (pasteurized),Chennai,2016,11,37.0,INR,L
+Milk (pasteurized),Chennai,2016,12,37.0,INR,L
+Milk (pasteurized),Delhi,2016,11,39.0,INR,L
+Milk (pasteurized),Delhi,2016,12,39.0,INR,L
+Milk (pasteurized),Hyderabad,2016,11,40.0,INR,L
+Milk (pasteurized),Hyderabad,2016,12,40.0,INR,L
+Milk (pasteurized),Jaipur,2016,11,34.0,INR,L
+Milk (pasteurized),Jaipur,2016,12,34.0,INR,L
+Milk (pasteurized),Kanpur,2016,11,50.0,INR,L
+Milk (pasteurized),Kanpur,2016,12,50.0,INR,L
+Milk (pasteurized),Lucknow,2016,11,50.0,INR,L
+Milk (pasteurized),Lucknow,2016,12,50.0,INR,L
+Milk (pasteurized),Mumbai,2016,11,42.0,INR,L
+Milk (pasteurized),Mumbai,2016,12,42.0,INR,L
+Milk (pasteurized),Patna,2016,11,39.0,INR,L
+Milk (pasteurized),Patna,2016,12,39.03,INR,L
+Onions,Ahmedabad,2016,11,15.0,INR,KG
+Onions,Ahmedabad,2016,12,15.0,INR,KG
+Onions,Bhopal,2016,11,6.07,INR,KG
+Onions,Bhopal,2016,12,7.1,INR,KG
+Onions,Chennai,2016,11,15.3,INR,KG
+Onions,Chennai,2016,12,15.61,INR,KG
+Onions,Delhi,2016,11,23.73,INR,KG
+Onions,Delhi,2016,12,22.94,INR,KG
+Onions,Hyderabad,2016,11,16.0,INR,KG
+Onions,Hyderabad,2016,12,16.0,INR,KG
+Onions,Jaipur,2016,11,10.73,INR,KG
+Onions,Jaipur,2016,12,8.84,INR,KG
+Onions,Kanpur,2016,11,16.0,INR,KG
+Onions,Kanpur,2016,12,14.21,INR,KG
+Onions,Lucknow,2016,11,17.59,INR,KG
+Onions,Lucknow,2016,12,17.28,INR,KG
+Onions,Mumbai,2016,11,16.53,INR,KG
+Onions,Mumbai,2016,12,16.13,INR,KG
+Onions,Patna,2016,11,12.23,INR,KG
+Onions,Patna,2016,12,16.26,INR,KG
+Potatoes,Ahmedabad,2016,11,15.0,INR,KG
+Potatoes,Ahmedabad,2016,12,15.0,INR,KG
+Potatoes,Bhopal,2016,11,17.29,INR,KG
+Potatoes,Bhopal,2016,12,11.79,INR,KG
+Potatoes,Chennai,2016,11,22.47,INR,KG
+Potatoes,Chennai,2016,12,19.21,INR,KG
+Potatoes,Delhi,2016,11,25.1,INR,KG
+Potatoes,Delhi,2016,12,15.48,INR,KG
+Potatoes,Hyderabad,2016,11,26.0,INR,KG
+Potatoes,Hyderabad,2016,12,26.0,INR,KG
+Potatoes,Jaipur,2016,11,12.07,INR,KG
+Potatoes,Jaipur,2016,12,7.48,INR,KG
+Potatoes,Kanpur,2016,11,22.24,INR,KG
+Potatoes,Kanpur,2016,12,11.66,INR,KG
+Potatoes,Lucknow,2016,11,19.38,INR,KG
+Potatoes,Lucknow,2016,12,11.1,INR,KG
+Potatoes,Mumbai,2016,11,22.93,INR,KG
+Potatoes,Mumbai,2016,12,17.81,INR,KG
+Potatoes,Patna,2016,11,17.65,INR,KG
+Potatoes,Patna,2016,12,15.87,INR,KG
+Rice,Ahmedabad,2016,11,28.0,INR,KG
+Rice,Ahmedabad,2016,12,28.0,INR,KG
+Rice,Bhopal,2016,11,23.0,INR,KG
+Rice,Bhopal,2016,12,23.0,INR,KG
+Rice,Chennai,2016,11,30.73,INR,KG
+Rice,Chennai,2016,12,32.79,INR,KG
+Rice,Delhi,2016,11,29.0,INR,KG
+Rice,Delhi,2016,12,29.9,INR,KG
+Rice,Hyderabad,2016,11,28.0,INR,KG
+Rice,Hyderabad,2016,12,28.0,INR,KG
+Rice,Jaipur,2016,11,24.0,INR,KG
+Rice,Jaipur,2016,12,24.06,INR,KG
+Rice,Kanpur,2016,11,22.0,INR,KG
+Rice,Kanpur,2016,12,22.0,INR,KG
+Rice,Lucknow,2016,11,23.0,INR,KG
+Rice,Lucknow,2016,12,23.17,INR,KG
+Rice,Mumbai,2016,11,30.0,INR,KG
+Rice,Mumbai,2016,12,30.0,INR,KG
+Rice,Patna,2016,11,26.0,INR,KG
+Rice,Patna,2016,12,26.81,INR,KG
+Salt (iodised),Ahmedabad,2016,11,17.0,INR,KG
+Salt (iodised),Ahmedabad,2016,12,17.0,INR,KG
+Salt (iodised),Bhopal,2016,11,14.0,INR,KG
+Salt (iodised),Bhopal,2016,12,14.0,INR,KG
+Salt (iodised),Chennai,2016,11,18.0,INR,KG
+Salt (iodised),Chennai,2016,12,18.0,INR,KG
+Salt (iodised),Delhi,2016,11,17.5,INR,KG
+Salt (iodised),Delhi,2016,12,18.0,INR,KG
+Salt (iodised),Hyderabad,2016,11,12.0,INR,KG
+Salt (iodised),Hyderabad,2016,12,12.0,INR,KG
+Salt (iodised),Jaipur,2016,11,16.0,INR,KG
+Salt (iodised),Jaipur,2016,12,16.0,INR,KG
+Salt (iodised),Kanpur,2016,11,14.0,INR,KG
+Salt (iodised),Kanpur,2016,12,14.0,INR,KG
+Salt (iodised),Lucknow,2016,11,16.0,INR,KG
+Salt (iodised),Lucknow,2016,12,16.0,INR,KG
+Salt (iodised),Mumbai,2016,11,18.0,INR,KG
+Salt (iodised),Mumbai,2016,12,18.0,INR,KG
+Salt (iodised),Patna,2016,11,17.0,INR,KG
+Salt (iodised),Patna,2016,12,17.0,INR,KG
+Sugar,Ahmedabad,2016,11,42.0,INR,KG
+Sugar,Ahmedabad,2016,12,42.0,INR,KG
+Sugar,Bhopal,2016,11,40.0,INR,KG
+Sugar,Bhopal,2016,12,40.0,INR,KG
+Sugar,Chennai,2016,11,42.47,INR,KG
+Sugar,Chennai,2016,12,41.89,INR,KG
+Sugar,Delhi,2016,11,42.07,INR,KG
+Sugar,Delhi,2016,12,40.81,INR,KG
+Sugar,Hyderabad,2016,11,39.0,INR,KG
+Sugar,Hyderabad,2016,12,39.0,INR,KG
+Sugar,Jaipur,2016,11,39.97,INR,KG
+Sugar,Jaipur,2016,12,38.45,INR,KG
+Sugar,Kanpur,2016,11,43.0,INR,KG
+Sugar,Kanpur,2016,12,41.41,INR,KG
+Sugar,Lucknow,2016,11,42.0,INR,KG
+Sugar,Lucknow,2016,12,40.07,INR,KG
+Sugar,Mumbai,2016,11,41.0,INR,KG
+Sugar,Mumbai,2016,12,41.0,INR,KG
+Sugar,Patna,2016,11,41.0,INR,KG
+Sugar,Patna,2016,12,41.13,INR,KG
+Tea (black),Ahmedabad,2016,11,210.0,INR,KG
+Tea (black),Ahmedabad,2016,12,210.0,INR,KG
+Tea (black),Bhopal,2016,11,250.0,INR,KG
+Tea (black),Bhopal,2016,12,250.0,INR,KG
+Tea (black),Chennai,2016,11,220.0,INR,KG
+Tea (black),Chennai,2016,12,220.0,INR,KG
+Tea (black),Delhi,2016,11,219.13,INR,KG
+Tea (black),Delhi,2016,12,215.06,INR,KG
+Tea (black),Hyderabad,2016,11,194.0,INR,KG
+Tea (black),Hyderabad,2016,12,194.0,INR,KG
+Tea (black),Jaipur,2016,11,150.0,INR,KG
+Tea (black),Jaipur,2016,12,150.0,INR,KG
+Tea (black),Kanpur,2016,11,190.0,INR,KG
+Tea (black),Kanpur,2016,12,190.0,INR,KG
+Tea (black),Lucknow,2016,11,230.0,INR,KG
+Tea (black),Lucknow,2016,12,230.0,INR,KG
+Tea (black),Mumbai,2016,11,250.0,INR,KG
+Tea (black),Mumbai,2016,12,250.0,INR,KG
+Tea (black),Patna,2016,11,150.0,INR,KG
+Tea (black),Patna,2016,12,150.0,INR,KG
+Tomatoes,Ahmedabad,2016,11,20.17,INR,KG
+Tomatoes,Ahmedabad,2016,12,19.68,INR,KG
+Tomatoes,Bhopal,2016,11,13.96,INR,KG
+Tomatoes,Bhopal,2016,12,10.34,INR,KG
+Tomatoes,Chennai,2016,11,10.03,INR,KG
+Tomatoes,Chennai,2016,12,10.75,INR,KG
+Tomatoes,Delhi,2016,11,28.37,INR,KG
+Tomatoes,Delhi,2016,12,24.16,INR,KG
+Tomatoes,Hyderabad,2016,11,17.0,INR,KG
+Tomatoes,Hyderabad,2016,12,11.87,INR,KG
+Tomatoes,Jaipur,2016,11,16.57,INR,KG
+Tomatoes,Jaipur,2016,12,12.74,INR,KG
+Tomatoes,Kanpur,2016,11,25.0,INR,KG
+Tomatoes,Kanpur,2016,12,16.48,INR,KG
+Tomatoes,Lucknow,2016,11,25.0,INR,KG
+Tomatoes,Lucknow,2016,12,18.97,INR,KG
+Tomatoes,Mumbai,2016,11,24.0,INR,KG
+Tomatoes,Mumbai,2016,12,18.06,INR,KG
+Tomatoes,Patna,2016,11,22.85,INR,KG
+Tomatoes,Patna,2016,12,16.45,INR,KG
+Wheat,Ahmedabad,2016,11,22.0,INR,KG
+Wheat,Ahmedabad,2016,12,22.0,INR,KG
+Wheat,Bhopal,2016,11,18.0,INR,KG
+Wheat,Bhopal,2016,12,18.0,INR,KG
+Wheat,Chennai,2016,11,31.27,INR,KG
+Wheat,Chennai,2016,12,31.68,INR,KG
+Wheat,Delhi,2016,11,23.53,INR,KG
+Wheat,Delhi,2016,12,22.77,INR,KG
+Wheat,Hyderabad,2016,11,27.13,INR,KG
+Wheat,Hyderabad,2016,12,27.0,INR,KG
+Wheat,Jaipur,2016,11,22.73,INR,KG
+Wheat,Jaipur,2016,12,22.9,INR,KG
+Wheat,Kanpur,2016,11,20.97,INR,KG
+Wheat,Kanpur,2016,12,20.0,INR,KG
+Wheat,Lucknow,2016,11,18.52,INR,KG
+Wheat,Lucknow,2016,12,20.0,INR,KG
+Wheat,Mumbai,2016,11,34.1,INR,KG
+Wheat,Mumbai,2016,12,33.23,INR,KG
+Wheat,Patna,2016,11,21.46,INR,KG
+Wheat,Patna,2016,12,23.63,INR,KG
+Wheat flour,Ahmedabad,2016,11,25.46,INR,KG
+Wheat flour,Ahmedabad,2016,12,26.0,INR,KG
+Wheat flour,Bhopal,2016,11,23.0,INR,KG
+Wheat flour,Bhopal,2016,12,23.0,INR,KG
+Wheat flour,Chennai,2016,11,29.7,INR,KG
+Wheat flour,Chennai,2016,12,30.0,INR,KG
+Wheat flour,Delhi,2016,11,25.83,INR,KG
+Wheat flour,Delhi,2016,12,25.35,INR,KG
+Wheat flour,Hyderabad,2016,11,28.2,INR,KG
+Wheat flour,Hyderabad,2016,12,28.0,INR,KG
+Wheat flour,Jaipur,2016,11,25.07,INR,KG
+Wheat flour,Jaipur,2016,12,26.0,INR,KG
+Wheat flour,Kanpur,2016,11,23.45,INR,KG
+Wheat flour,Kanpur,2016,12,24.0,INR,KG
+Wheat flour,Lucknow,2016,11,21.52,INR,KG
+Wheat flour,Lucknow,2016,12,22.0,INR,KG
+Wheat flour,Mumbai,2016,11,32.0,INR,KG
+Wheat flour,Mumbai,2016,12,33.58,INR,KG
+Wheat flour,Patna,2016,11,23.69,INR,KG
+Wheat flour,Patna,2016,12,26.43,INR,KG

@@ -1,0 +1,64 @@
+-- 1회차 공통 예제의 코드 읽기·SQL 작성·이벤트 예측용 파일입니다.
+-- 강사는 맥미니에서 실행하고, 학생은 로컬 파일만 작성합니다.
+-- 전체 파일을 실행하지 마세요. [B]는 PostgreSQL, [D]는 Spark SQL입니다.
+-- my-r1은 예측용 이름입니다. 강사의 실제 CASE_ID-r1과 구분합니다.
+-- 이름 / 학생 ID: 김준 (junekim) / de_bootcamp_7th
+
+-- [A] flink/ingest.sql.template 읽기 — 답은 주석으로 적습니다.
+-- 1. JdbcCatalog와 warehouse는 각각 무엇을 가리키나요?
+-- 답: JdbcCatalog는 PostgreSQL(catalog-db:5432/catalog)을 백엔드로 사용하여 Iceberg 테이블의 현재 메타데이터 포인터(위치)를 관리하는 카탈로그이며, warehouse(s3://warehouse/)는 실제 데이터 파일(Parquet)과 Iceberg 메타데이터 파일(JSON/manifest)이 영구 저장되는 MinIO(S3 호환 오브젝트 스토리지) 버킷의 루트 경로를 가리킵니다.
+-- 2. topic-pattern과 format='raw'는 무엇을 읽어 payload에 저장하나요?
+-- 답: topic-pattern('cdc.public.(orders|payments|refunds)') 정규식과 일치하는 Debezium Kafka 토픽들의 레코드 value(JSON Envelope 전체 원문)를 어떠한 디코딩/스키마 변환 없이 바이너리/문자열 그대로('raw' format) 읽어와 Bronze 테이블의 payload 컬럼에 저장합니다.
+-- 3. checkpoint 완료 외에 외부 조회까지 무엇을 확인해야 하나요?
+-- 답: Flink 스트리밍의 Checkpoint 성공 외에도, Iceberg Sink가 해당 체크포인트 시점의 데이터 파일들을 모아 스냅샷 메타데이터(metadata.json)를 S3에 기록하고 JDBC Catalog에 트랜잭션 커밋(commit)을 최종 완료해야 외부 쿼리 엔진(Spark, Trino 등)에서 실제 조회가 가능하므로, Iceberg Commit 성공 및 외부 조회 결과(새 스냅샷 생성 여부)까지 확인해야 합니다.
+-- 4. WHERE payload IS NOT NULL은 무엇을 제외하고 어떤 이벤트를 남기나요?
+-- 답: Debezium이 DB 레코드 DELETE 후 Kafka 토픽 압축(Log Compaction) 처리를 위해 발행하는 value가 null인 Tombstone 메시지를 제외하고, 실제 데이터 변경 내용(c:생성, u:수정, d:삭제-before 포함, r:초기스냅샷)이 담긴 유효한 Debezium Envelope 이벤트만 Bronze에 보관합니다.
+
+-- [B] PostgreSQL 공통 예제 — 같은 환불 한 건을 입력·정정·삭제합니다.
+-- orders·payments는 준비 데이터이며 아래 두 SELECT만 추가 작성합니다.
+BEGIN;
+INSERT INTO orders (order_id, ordered_at, status)
+VALUES ('my-o1', '2026-10-19T10:00:00+09:00', 'confirmed');
+INSERT INTO payments (payment_id, order_id, amount, status)
+VALUES ('my-p1', 'my-o1', 100000, 'success');
+COMMIT;
+
+INSERT INTO refunds (refund_id, payment_id, amount, status)
+VALUES ('my-r1', 'my-p1', 20000, 'success');
+SELECT refund_id, payment_id, amount, status
+FROM refunds WHERE refund_id = 'my-r1';
+
+UPDATE refunds SET amount = 30000 WHERE refund_id = 'my-r1';
+-- TODO: 같은 refund_id의 현재 값이 1행·30000인지 확인하는 SELECT
+SELECT refund_id, payment_id, amount, status
+FROM refunds WHERE refund_id = 'my-r1';
+
+DELETE FROM refunds WHERE refund_id = 'my-r1';
+-- TODO: 같은 refund_id가 0행인지 확인하는 SELECT
+SELECT refund_id, payment_id, amount, status
+FROM refunds WHERE refund_id = 'my-r1';
+
+-- [C] Kafka CDC 이벤트의 사전 예측
+-- 예제 원천 테이블에는 REPLICA IDENTITY FULL이 설정되어 있습니다.
+-- INSERT: key: {"refund_id": "my-r1"} / op: 'c' / before.amount: null / after.amount: 20000
+-- UPDATE: key: {"refund_id": "my-r1"} / op: 'u' / before.amount: 20000 / after.amount: 30000
+-- DELETE: key: {"refund_id": "my-r1"} / op: 'd' / before.amount: 30000 / after.amount: null
+-- DELETE의 after가 null일 때 원천 PK를 찾을 곳: before.refund_id (또는 Kafka Key의 refund_id)
+-- Kafka와 Bronze의 같은 수집 위치를 대조하는 세 항목: topic, partition_id (partition), kafka_offset (offset)
+
+-- [D] Spark SQL 참고 — 이번 환불 키의 Bronze 이력만 조회합니다.
+-- 읽기용 예제이며 학생이 서버에 접속해 실행하는 과제가 아닙니다.
+-- 실제 조회 시 my-r1을 강사의 CASE_ID-r1로 바꿉니다.
+SELECT get_json_object(payload, '$.op') AS op,
+       get_json_object(payload, '$.before.amount') AS before_amount,
+       get_json_object(payload, '$.after.amount') AS after_amount,
+       topic, partition_id, kafka_offset
+FROM lake.bronze.cdc_events
+WHERE topic = 'cdc.public.refunds'
+  AND (get_json_object(payload, '$.after.refund_id') = 'my-r1'
+       OR get_json_object(payload, '$.before.refund_id') = 'my-r1')
+ORDER BY partition_id, kafka_offset;
+
+-- 실제 before/after·offset·copies는 강사 화면에서 예측과 함께 대조합니다.
+-- 관찰 메모는 선택이며, 수업 중 submission.md 작성이나 파일 제출은 하지 않습니다.
+-- 오늘 개인 테이블 DDL·DML은 작성하지 않습니다. 개인 설계 확정은 3회차에 진행합니다.

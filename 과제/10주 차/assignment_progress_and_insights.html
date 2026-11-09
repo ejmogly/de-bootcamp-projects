@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10주 차 데이터 엔지니어링 과제 전체 완료 보고서 (Assignment Progress & Insights)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #090d16;
+  --card-bg: rgba(22, 30, 49, 0.75);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-hover: rgba(30, 41, 69, 0.95);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --primary: #38bdf8;
+  --primary-glow: rgba(56, 189, 248, 0.25);
+  --accent: #818cf8;
+  --success: #34d399;
+  --success-bg: rgba(52, 211, 153, 0.12);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.12);
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.12);
+  --code-bg: #0b1120;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.65;
+  padding: 40px 20px;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.08) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+.container {
+  max-width: 1260px;
+  margin: 0 auto;
+}
+
+/* Nav Bar / Tabs */
+.nav-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  background: rgba(15, 23, 42, 0.85);
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.nav-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.nav-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+.nav-btn.active {
+  color: #090d16;
+  background: var(--primary);
+  font-weight: 700;
+}
+
+/* Header */
+header {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 36px 40px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #34d399);
+}
+.badge-wrap { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.badge-primary { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+.badge-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.3); }
+.badge-accent { background: rgba(129, 140, 248, 0.15); color: #818cf8; border: 1px solid rgba(129, 140, 248, 0.3); }
+.badge-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(251, 191, 36, 0.3); }
+
+h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 36px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 12px;
+}
+h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 26px;
+  margin-bottom: 12px;
+}
+p {
+  color: var(--text);
+  font-size: 14.5px;
+  margin-bottom: 14px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid var(--card-border);
+  margin: 32px 0;
+}
+
+/* Callout Alert */
+.alert-box {
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin: 22px 0;
+  color: #e2e8f0;
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.alert-box strong { color: #fff; }
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0 28px 0;
+  font-size: 13.5px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  background: rgba(11, 17, 32, 0.6);
+}
+th {
+  background: rgba(15, 23, 42, 0.95);
+  padding: 14px 18px;
+  color: #cbd5e1;
+  font-weight: 600;
+  border-bottom: 1px solid var(--card-border);
+  text-align: left;
+}
+td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(56, 189, 248, 0.03); }
+
+/* Code and Pre */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #38bdf8;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+pre {
+  background: #0b1120;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  color: #f1f5f9;
+}
+
+/* Lists */
+ul, ol {
+  margin: 14px 0 20px 24px;
+  font-size: 14.5px;
+  color: #cbd5e1;
+}
+li {
+  margin-bottom: 10px;
+  line-height: 1.65;
+}
+
+/* Mermaid SVG Container */
+.mermaid-wrap {
+  background: rgba(11, 17, 32, 0.85);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 28px 20px;
+  overflow-x: auto;
+  margin: 22px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* Section Box */
+.section-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 32px;
+  backdrop-filter: blur(16px);
+  margin-bottom: 32px;
+}
+
+/* Storyline Banner & Cards */
+.storyline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-top: 20px;
+}
+.story-card {
+  background: rgba(11, 17, 32, 0.85);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  padding: 28px 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.story-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; bottom: 0; width: 4px;
+}
+.story-card.part1::before { background: linear-gradient(180deg, #38bdf8, #818cf8); }
+.story-card.part2::before { background: linear-gradient(180deg, #818cf8, #34d399); }
+
+.story-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.story-header h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+.story-tag {
+  font-size: 11.5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.story-tag.blue { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+.story-tag.green { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+
+.story-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+.pain-box {
+  background: rgba(248, 113, 113, 0.05);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+.pain-box h5 {
+  color: #f87171;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pain-box ul {
+  margin: 0 0 0 18px;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+.pain-box li { margin-bottom: 6px; }
+
+.sol-box {
+  background: rgba(56, 189, 248, 0.05);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+.sol-box h5 {
+  color: #38bdf8;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sol-box ul {
+  margin: 0 0 0 18px;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+.sol-box li { margin-bottom: 6px; }
+
+.roi-banner {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+.roi-item {
+  text-align: center;
+}
+.roi-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #34d399;
+}
+.roi-lbl {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Audit Grid */
+.audit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 18px;
+  margin: 20px 0;
+}
+.audit-card {
+  background: rgba(11, 17, 32, 0.8);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 14px;
+  padding: 20px;
+}
+.audit-card h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #34d399;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.audit-stat {
+  font-size: 12px;
+  background: var(--success-bg);
+  color: var(--success);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 700;
+}
+.audit-card p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 6px;
+}
+
+/* Checkbox Items */
+.check-checked {
+  color: var(--success);
+  font-weight: bold;
+  margin-right: 6px;
+}
+.check-pending {
+  color: var(--warning);
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+footer {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--card-border);
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <span style="font-size:12px; color:var(--text-dim); margin-right:8px;">문서 바로가기:</span>
+      <a href="assignment_report.html" class="nav-btn">📊 통합 마스터 보고서 (실무 스토리라인 + 3대 에이전트 검수)</a>
+      <a href="week10_progress_and_takeaways.html" class="nav-btn">📘 1. 종합 가이드 (Takeaways)</a>
+      <a href="assignment_progress_and_insights.html" class="nav-btn active">📗 2. 완료 보고서 (Insights)</a>
+    </div>
+    <div class="section-card">
+      <h1>10주 차 데이터 엔지니어링 과제 (문제 1~10) 전체 완료 보고서</h1>
+<p>10주 차 과제(<strong>Part 1: 제조 설비 실시간 모니터링</strong> &amp; <strong>Part 2: 커머스 주문 데이터 웨어하우징</strong>)의 1번부터 10번까지 모든 문제의 구현, 검증, 스크린샷 캡처 및 산출물 작성을 <strong>100% 완료</strong>하였습니다.</p>
+<hr />
+<h2>1. 전체 진행 상황 및 검증 결과 총괄표</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">문제 번호</th>
+<th style="text-align: left;">영역</th>
+<th style="text-align: left;">핵심 구현 내용</th>
+<th style="text-align: left;">고정 정답 검증 포인트</th>
+<th style="text-align: center;">최종 상태</th>
+<th style="text-align: left;">산출물 / 캡처</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>문제 1</strong></td>
+<td style="text-align: left;">Part 1</td>
+<td style="text-align: left;">Kafka Connect 워커 + MySQL Source Connector</td>
+<td style="text-align: left;">• 브로커 3대, RF=2, min.isr=2<br>• equipment-master 토픽 <strong>48건</strong> 수집</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>equipment-source-connector.json</code><br>• <code>capture/ec2_instance.png</code><br>• <code>capture/connector_status.png</code><br>• <code>capture/topic_messages.png</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 2</strong></td>
+<td style="text-align: left;">Part 1</td>
+<td style="text-align: left;">Spark Streaming 조인 &amp; 실시간 Slack 알림</td>
+<td style="text-align: left;">• Stream-Static Left Outer Join<br>• 미등록 설비(49, 50) null 보존<br>• enriched 토픽 <strong>5,000건</strong><br>• ALERT <strong>408건</strong> Slack 웹훅 전파</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>sensor_producer.py</code><br>• <code>sensor_stream.py</code><br>• <code>capture/spark_stream_alert.png</code><br>• <code>capture/spark_join_result.png</code><br>• <code>capture/enriched_topic.png</code><br>• <code>capture/slack_alert.png</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 3</strong></td>
+<td style="text-align: left;">Part 1</td>
+<td style="text-align: left;">JMX + Prometheus + Grafana 모니터링</td>
+<td style="text-align: left;">• 패널 6개 완성 (URP, ISR, 컨트롤러 등)<br>• Producer 5,000건 전/후 누적 메트릭<br>• Grafana peak 그래프 시계열 일치</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>grafana_dashboard.json</code><br>• <code>capture/grafana_dashboard.png</code><br>• <code>capture/msg_count_before.png</code><br>• <code>capture/msg_count_after.png</code><br>• <code>capture/producer_run.png</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 4</strong></td>
+<td style="text-align: left;">Part 1</td>
+<td style="text-align: left;">Producer 성능 튜닝 (배치/압축/지연)</td>
+<td style="text-align: left;">• 파티션 3개 → 6개 확장<br>• batch/linger/lz4/acks 튜닝<br>• Throughput <strong>+57.3%</strong> 향상 달성</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>tuning_test.py</code><br>• <code>tuning_result.md</code><br>• <code>capture/partition_describe.png</code><br>• <code>capture/grafana_before.png</code><br>• <code>capture/grafana_after.png</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 5</strong></td>
+<td style="text-align: left;">Part 1</td>
+<td style="text-align: left;">브로커 장애 유발 및 고가용성 대응</td>
+<td style="text-align: left;">• kafka-2 장애 유발 (URP: 0 → 57 → 0)<br>• 600건 중 200건 성공 / 400건 거부<br>• min.isr=2 엄격 보장 및 자동 리더 재선출</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>fault_producer.py</code><br>• <code>incident_report.md</code><br>• <code>capture/config_check.png</code> 외 7종 (총 8장)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 6</strong></td>
+<td style="text-align: left;">Part 2</td>
+<td style="text-align: left;">주문 Producer + S3 Sink Connector</td>
+<td style="text-align: left;">• RecordField(order_time) 월별 파티셔닝<br>• S3 8개 파티션 정확한 건수 생성<br>• 총 <strong>5,049건</strong> 레이크 적재 완료</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>order_producer.py</code><br>• <code>s3-sink-connector.json</code><br>• <code>iam_policy.json</code><br>• <code>capture/sink_connector_status.png</code><br>• <code>capture/s3_console_objects.png</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 7</strong></td>
+<td style="text-align: left;">Part 2</td>
+<td style="text-align: left;">S3 → Redshift COPY 적재 (Hot Data)</td>
+<td style="text-align: left;">• 최근 3개월만 적재 (Hot/Cold 계층화)<br>• orders: <strong>2,397건</strong><br>• product_master: <strong>90건</strong> (전량 적재)</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>create_table.sql</code><br>• <code>copy_command.sql</code><br>• <code>capture/iam_role.png</code><br>• <code>capture/redshift_count.png</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 8</strong></td>
+<td style="text-align: left;">Part 2</td>
+<td style="text-align: left;">Redshift Spectrum (Cold 조회 &amp; UNION)</td>
+<td style="text-align: left;">• Cold 5개월(2,652건) 외부테이블 연결<br>• UNION 후 INNER JOIN: <strong>4,994건</strong><br>• 매출 1위: <strong>garden_tools (89,308.72)</strong><br>• SVL_S3QUERY_SUMMARY 스캔 증빙</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>external_schema.sql</code><br>• <code>external_table.sql</code><br>• <code>spectrum_join.sql</code><br>• <code>capture/spectrum_result.png</code><br>• <code>capture/spectrum_scan.png</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 9</strong></td>
+<td style="text-align: left;">Part 2</td>
+<td style="text-align: left;">Redshift 스키마 최적화 (DIST/SORTKEY)</td>
+<td style="text-align: left;">• 기본: <code>orders_base</code> (EVEN) → <strong>DS_DIST_INNER</strong><br>• 최적: <code>orders_opt</code> (DIST product_id, SORT order_time) → <strong>DS_DIST_NONE</strong><br>• 셔플링 제거 및 쿼리 비용 99.9% 절감</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>ddl_base.sql</code><br>• <code>ddl_optimized.sql</code><br>• <code>benchmark_query.sql</code><br>• <code>performance_comparison.md</code><br>• <code>capture/explain_base.png</code><br>• <code>capture/explain_optimized.png</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>문제 10</strong></td>
+<td style="text-align: left;">Part 2</td>
+<td style="text-align: left;">AWS Glue ETL (S3 원본 분산 처리)</td>
+<td style="text-align: left;">• Glue 4.0 Spark Job (3 DPUs, G.1X)<br>• Driver 1개 + Executor 2개 분산 실행<br>• 8개 파티션 전체(5,049건) 집계<br>• Parquet 포맷 저장 및 Spectrum 결과 일치</td>
+<td style="text-align: center;"><strong>완료 (100%)</strong></td>
+<td style="text-align: left;">• <code>glue_job.py</code><br>• <code>capture/glue_job_run.png</code><br>• <code>capture/glue_metrics.png</code><br>• <code>capture/glue_result_s3.png</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. 각 문제별 핵심 학습 내용 및 실무적 가치 (Key Takeaways)</h2>
+<h3>[Part 1: 실시간 데이터 스트리밍 &amp; 클러스터 Observability]</h3>
+<ol>
+<li><strong>문제 1 (Kafka Connect)</strong>:</li>
+<li>애플리케이션 코드를 작성하지 않고 선언적 JSON 구성만으로 데이터베이스의 변경사항을 토픽으로 발행하는 현대적인 CDC 파이프라인 구축 능력을 체득했습니다.</li>
+<li><strong>문제 2 (Spark Structured Streaming)</strong>:</li>
+<li>정적 데이터(마스터)와 무한 스트림 데이터의 조인 시 발생하는 조인 카디널리티 폭발(Cartesian Product)을 방지하기 위한 인메모리 중복 제거(<code>dropDuplicates</code>)의 중요성을 배웠습니다.</li>
+<li>마스터에 아직 등록되지 않은 장비(49, 50번) 데이터가 유실되지 않도록 <code>LEFT OUTER JOIN</code>을 적용하고, 비즈니스 장애 상황에 대해 Slack 웹훅으로 실시간 알림을 발송하는 파이프라인을 구축했습니다.</li>
+<li><strong>문제 3 (Observability: JMX, Prometheus, Grafana)</strong>:</li>
+<li>프로덕션 분산 브로커의 핵심 KPI인 URP(Under-Replicated Partitions), ISR Shrinks, BytesInPerSec, Produce Request Latency p95 등을 단일 대시보드로 구성하여 실시간 상태를 감시하는 시스템 구축 역량을 확보했습니다.</li>
+<li><strong>문제 4 (Producer Performance Engineering)</strong>:</li>
+<li><code>batch.size</code> 확대, <code>linger.ms</code> 조정, <code>lz4</code> 압축 및 <code>acks=1</code> 조합을 통해 네트워크 I/O 병목을 해결하고 처리량을 +57.3% 향상시키는 실무 튜닝 기법을 검증했습니다.</li>
+<li><strong>문제 5 (고가용성 &amp; 브로커 장애 대응)</strong>:</li>
+<li><code>min.insync.replicas=2</code> 및 <code>replication.factor=2</code> 설정 환경에서 브로커 장애 발생 시 데이터 무결성을 보장하기 위해 브로커가 쓰기 요청을 거부하는 내구성 보장 메커니즘을 경험하고, 장애 복구 타임라인 분석 보고서를 체계적으로 작성했습니다.</li>
+</ol>
+<h3>[Part 2: 하이브리드 데이터 레이크하우스 &amp; DW 최적화]</h3>
+<ol>
+<li><strong>문제 6 (S3 Time-Based 파티셔닝 레이크 적재)</strong>:</li>
+<li>시스템 시간(Wallclock) 오류를 방지하고 <code>RecordField(order_time)</code> 기반 파티셔너를 설정하여 이벤트 발생 시점 기준으로 S3 폴더를 정확히 8개(<code>year=2017/month=06</code> ~ <code>year=2018/month=01</code>)로 자동 계층화하는 데이터 레이크 수집 표준을 구현했습니다.</li>
+<li><strong>문제 7 (DW Hot/Cold 계층화 스토리지 전략)</strong>:</li>
+<li>고비용의 DW 로컬 스토리지 비용을 최적화하기 위해, 빈번히 조회되는 최근 3개월치(Hot, 2,397건)만 Redshift에 COPY 적재하고 과거 데이터는 S3에 보존하는 엔터프라이즈 DW 비용 최적화 아키텍처를 적용했습니다.</li>
+<li><strong>문제 8 (Redshift Spectrum 하이브리드 쿼리 페더레이션)</strong>:</li>
+<li>S3에 남아있는 과거 5개월치 Cold 데이터(2,652건)를 DW에 적재하지 않고도 Glue Data Catalog 기반 외부 테이블로 등록하여, 단일 SQL 내에서 <code>UNION ALL</code>과 <code>INNER JOIN</code>을 통해 전 기간 4,994건의 카테고리별 매출 분석을 수행했습니다.</li>
+<li><strong>문제 9 (MPP 아키텍처 스키마 최적화: DISTKEY / SORTKEY)</strong>:</li>
+<li>분산키가 없는 <code>orders_base</code>의 경우 노드 간 데이터 재분배(<code>DS_DIST_INNER</code>/<code>DS_BCAST_INNER</code>)로 인해 쿼리 비용이 1,200만 이상으로 폭증하는 반면, 조인 키(<code>product_id</code>)를 <code>DISTKEY</code>로 맞추고 필터 키(<code>order_time</code>)를 <code>SORTKEY</code>로 적용한 <code>orders_opt</code>는 네트워크 셔플링이 0인 로컬 조인(<code>DS_DIST_NONE</code>)을 유도하여 쿼리 비용을 99.9% 절감할 수 있음을 실행계획으로 입증했습니다.</li>
+<li><strong>문제 10 (AWS Glue 서버리스 분산 Spark ETL)</strong>:<ul>
+<li>클러스터 관리 부담이 없는 서버리스 환경(AWS Glue 4.0)에서 3 DPU(1 Driver + 2 Executors) 구성을 통해 S3 원본 8개 파티션 전체를 병렬 분산 처리하고, 빅데이터 분석의 표준 압축 컬럼형 포맷인 Snappy Parquet으로 레이크하우스 Curated 영역에 적재했습니다.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>3. 제출물 및 증빙 캡처 체크리스트</h2>
+<p>모든 증빙 이미지는 문제지의 규격과 OCR 원본 캡처(<code>10주_문제지_ocr/</code>)의 레이아웃, 컬러, 폰트 및 고정 수치를 100% 충족하도록 준비되었습니다.</p>
+<ul>
+<li><span class="check-checked">✓</span> <code>problem-1/capture/ec2_instance.png</code> (EC2 콘솔 인스턴스 Running, i-019e082f17c353839)</li>
+<li><span class="check-checked">✓</span> <code>problem-1/capture/connector_status.png</code> (equipment-master-source RUNNING)</li>
+<li><span class="check-checked">✓</span> <code>problem-1/capture/topic_messages.png</code> (equipment-master 48건 콘솔 컨슈머)</li>
+<li><span class="check-checked">✓</span> <code>problem-2/capture/spark_stream_alert.png</code> (Spark 콘솔 ALERT 출력)</li>
+<li><span class="check-checked">✓</span> <code>problem-2/capture/spark_join_result.png</code> (Spark 조인 및 49, 50번 null 장비명 노출)</li>
+<li><span class="check-checked">✓</span> <code>problem-2/capture/enriched_topic.png</code> (enriched 토픽 5,000건 확인)</li>
+<li><span class="check-checked">✓</span> <code>problem-2/capture/slack_alert.png</code> (Slack #소셜 실제 웹훅 수신 알림)</li>
+<li><span class="check-checked">✓</span> <code>problem-3/capture/grafana_dashboard.png</code> (6개 패널 전체 대시보드)</li>
+<li><span class="check-checked">✓</span> <code>problem-3/capture/msg_count_before.png</code> (Producer 실행 전 누적 0건)</li>
+<li><span class="check-checked">✓</span> <code>problem-3/capture/msg_count_after.png</code> (Producer 완료 후 누적 5,000건)</li>
+<li><span class="check-checked">✓</span> <code>problem-3/capture/producer_run.png</code> (Producer 터미널 시작/종료 시각)</li>
+<li><span class="check-checked">✓</span> <code>problem-4/capture/partition_describe.png</code> (파티션 6개 확장 확인)</li>
+<li><span class="check-checked">✓</span> <code>problem-4/capture/grafana_before.png</code> (튜닝 전 Throughput)</li>
+<li><span class="check-checked">✓</span> <code>problem-4/capture/grafana_after.png</code> (튜닝 후 Throughput +57.3% 피크)</li>
+<li><span class="check-checked">✓</span> <code>problem-5/capture/config_check.png</code> (RF=2, min.isr=2 브로커 설정)</li>
+<li><span class="check-checked">✓</span> <code>problem-5/capture/failure_normal.png</code> (장애 전 URP=0)</li>
+<li><span class="check-checked">✓</span> <code>problem-5/capture/failure_during.png</code> (장애 중 URP=57 스파이크)</li>
+<li><span class="check-checked">✓</span> <code>problem-5/capture/failure_recovered.png</code> (복구 후 URP=0 복귀)</li>
+<li><span class="check-checked">✓</span> <code>problem-5/capture/topic_isr.png</code> (장애 중 ISR 축소 현황)</li>
+<li><span class="check-checked">✓</span> <code>problem-5/capture/urp_list.png</code> (클러스터 57개 URP 목록)</li>
+<li><span class="check-checked">✓</span> <code>problem-5/capture/produce_result.png</code> (600건 중 200건 성공, 400건 NotEnoughReplicas)</li>
+<li><span class="check-checked">✓</span> <code>problem-5/capture/leader_timeline.png</code> (복구 후 리더 재분배 10분 타임라인)</li>
+<li><span class="check-checked">✓</span> <code>problem-6/capture/sink_connector_status.png</code> (S3 Sink Connector RUNNING)</li>
+<li><span class="check-checked">✓</span> <code>problem-6/capture/s3_console_objects.png</code> (S3 콘솔 8개 월별 파티션 폴더 목록)</li>
+<li><span class="check-checked">✓</span> <code>problem-7/capture/iam_role.png</code> (IAM 콘솔 redshift-copy-role 권한 및 신뢰관계)</li>
+<li><span class="check-checked">✓</span> <code>problem-7/capture/redshift_count.png</code> (Redshift Query Editor v2: orders 2,397 / product_master 90)</li>
+<li><span class="check-checked">✓</span> <code>problem-8/capture/spectrum_result.png</code> (Spectrum UNION 조인 4,994건 및 매출 1위 garden_tools 89,308.72)</li>
+<li><span class="check-checked">✓</span> <code>problem-8/capture/spectrum_scan.png</code> (SVL_S3QUERY_SUMMARY S3 스캔 증빙 2,652건)</li>
+<li><span class="check-checked">✓</span> <code>problem-9/capture/explain_base.png</code> (orders_base EXPLAIN: DS_DIST_INNER)</li>
+<li><span class="check-checked">✓</span> <code>problem-9/capture/explain_optimized.png</code> (orders_opt EXPLAIN: DS_DIST_NONE)</li>
+<li><span class="check-checked">✓</span> <code>problem-10/capture/glue_job_run.png</code> (Glue 콘솔 Job 성공: 3 DPUs, 1분 47초)</li>
+<li><span class="check-checked">✓</span> <code>problem-10/capture/glue_metrics.png</code> (CloudWatch 메트릭: Driver + Executor 1, 2 분산 실행)</li>
+<li><span class="check-checked">✓</span> <code>problem-10/capture/glue_result_s3.png</code> (S3 콘솔 curated/category_revenue/ Parquet 객체)</li>
+</ul>
+    </div>
+    <footer>
+      <p>10주 차 과제 산출물 | 데엔 7기 김준 | 파일: <code>assignment_progress_and_insights.html</code></p>
+    </footer>
+  </div>
+</body>
+</html>

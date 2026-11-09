@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-svc
+  namespace: stock-junekim
+  labels:
+    app: stock
+spec:
+  clusterIP: None
+  selector:
+    app: stock
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
